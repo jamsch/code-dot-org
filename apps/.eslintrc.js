@@ -38,8 +38,9 @@ module.exports = {
     'jest',
   ],
   parserOptions: {
+    requireConfigFile: true,
     babelOptions: {
-      presets: ['@babel/preset-react'],
+      configFile: require.resolve('./babel.config.json'),
     },
   },
   extends: [
