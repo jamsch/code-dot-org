@@ -38,7 +38,6 @@ module.exports = {
     'jest',
   ],
   parserOptions: {
-    requireConfigFile: true,
     babelOptions: {
       configFile: require.resolve('./babel.config.json'),
     },
