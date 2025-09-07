@@ -7,16 +7,26 @@ import Skeleton from '@cdo/apps/util/loadingSkeleton';
 
 // Returns an array of rows, each with the given number of cells containing
 // a Skeleton element.
-const SkeletonRows = ({numRows, numCols}) => {
-  return _.times(numRows, rowIndex => (
-    <tr key={rowIndex}>
-      {_.times(numCols, colIndex => (
-        <td key={colIndex} style={styles.tableCell}>
-          <Skeleton />
-        </td>
+const SkeletonRows = ({
+  numRows,
+  numCols,
+}: {
+  numRows: number;
+  numCols: number;
+}) => {
+  return (
+    <>
+      {_.times(numRows, rowIndex => (
+        <tr key={rowIndex}>
+          {_.times(numCols, colIndex => (
+            <td key={colIndex} style={styles.tableCell}>
+              <Skeleton />
+            </td>
+          ))}
+        </tr>
       ))}
-    </tr>
-  ));
+    </>
+  );
 };
 
 SkeletonRows.propTypes = {

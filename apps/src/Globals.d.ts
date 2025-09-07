@@ -8,6 +8,59 @@ declare module '*.module.scss' {
   export default classes;
 }
 
+/** These are initialized on the `window.dashboard` object at `sites/studio/pages/code-studio.js` */
+type StudioDashboard = {
+  /** assets.js module */
+  assets: Record<string, unknown>;
+  /** clientState.js module */
+  clientState: Record<string, unknown>;
+  /** createCallouts.js module (default export) */
+  createCallouts: (callouts: unknown) => void;
+  /** codeStudioLevels.js module (specific imports) */
+  codeStudioLevels: Record<string, unknown>;
+  /** hashEmail.js module (default export) */
+  hashEmail: (options: unknown) => void;
+  /** header.js module */
+  header: Record<string, unknown>;
+  /** pairing.js module */
+  pairing: Record<string, unknown>;
+  /** popup-window.js module */
+  popupWindow: JQuery.TypeEventHandler<
+    unknown,
+    null,
+    unknown,
+    unknown,
+    'click'
+  >;
+  /** project.js module */
+  project: Record<string, unknown>;
+  /** reporting.js module */
+  reporting: Record<string, unknown>;
+  /** videos.js module */
+  videos: Record<string, unknown>;
+};
+
+declare interface Window {
+  /** LegacyDialog.js module (default export) */
+  Dialog?: (options: unknown) => void;
+  /** freeResponse.js module (default export) */
+  FreeResponse?: unknown;
+  /** multi.js module */
+  Multi?: unknown;
+  /** textMatch.js module (default export) */
+  TextMatch?: unknown;
+  /** Sounds instance from Sounds.js */
+  CDOSounds?: unknown;
+
+  dashboard: Partial<
+    StudioDashboard & {
+      rack_env: 'production' | 'test' | 'levelbuilder' | 'unit_test' | string;
+      /** CODE_ORG_URL constant */
+      CODE_ORG_URL: string;
+    } & Record<string, unknown>
+  >;
+}
+
 // Declaring dashboard as 'any' because it is not well documented.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const dashboard: any;

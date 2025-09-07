@@ -6,28 +6,49 @@ import {makeEnum} from '@cdo/apps/utils';
 
 export const LockStatus = makeEnum('Locked', 'Editable', 'ReadonlyAnswers');
 
-/**
- * @typedef {Object} UserLockState
- * @property {string} name name of student
- * @property {LockStatus} lockStatus lock status (corresponds to the radio buttons in the dialog)
- * @property {Object} userLevelData opaque user_level data sent by server used to identify a user's lock data
- */
+export type LockStatusValue = 'Locked' | 'Editable' | 'ReadonlyAnswers';
 
-/**
- * @typedef {UserLockState[]} LockState array of UserLockState objects, usually
- *    representing the lock state for the students in a one section
- */
+export type UserLockState = {
+  /** name of student */
+  name: string;
+  /**  lock status (corresponds to the radio buttons in the dialog) */
+  lockStatus: LockStatusValue;
+  /** opaque user_level data sent by server used to identify a user's lock data */
+  userLevelData: unknown;
+};
+
+/** Array of UserLockState objects, usually representing the lock state for the students in a one section */
+export type LockState = UserLockState[];
+
+/** Return type from /api/lock_status */
+type LockStatusResponse = {
+  [sectionId: number]: {
+    lessons: {
+      [lessonId: number]: Array<{
+        user_level_data: unknown;
+        name: string;
+        locked: boolean;
+        readonly_answers: boolean;
+      }>;
+    };
+  };
+};
 
 /**
  * Retrieves the lock state from the server and extracts the data needed by
  * the LeesonLockDialog.
- * @param {number} unitId unit id
- * @param {number} lessonId lesson id
- * @param {number} sectionId section id
- * @returns {{loading: boolean, serverLockState: LockState}}
+ * @param unitId unit id
+ * @param lessonId lesson id
+ * @param sectionId section id
  */
-export function useGetLockState(unitId, lessonId, sectionId) {
-  const {loading, data} = useFetch(`/api/lock_status?script_id=${unitId}`);
+export function useGetLockState(
+  unitId: number,
+  lessonId: number,
+  sectionId: number
+) {
+  const {loading, data} = useFetch<LockStatusResponse>(
+    `/api/lock_status?script_id=${unitId}`
+  );
 
   const serverLockState = useMemo(
     () => extractLockData(data, sectionId, lessonId),
@@ -40,19 +61,19 @@ export function useGetLockState(unitId, lessonId, sectionId) {
 /**
  * Extracts and converts the lock status for the given section and lesson.
  * The first parameter is the parsed response to /api/lock_status from the server.
- * @param {Object} serverLockState parsed response to /api/lock_status
- * @param {number} sectionId section id
- * @param {number} lessonId lesson id
- * @returns {LockState}
- *    Array of objects containing lock status info for each student in the given
+ * @param serverLockState parsed response to /api/lock_status
+ * @param sectionId section id
+ * @param lessonId lesson id
+ * @returns Array of objects containing lock status info for each student in the given
  *    section for the given lesson.
  */
-function extractLockData(serverLockState, sectionId, lessonId) {
-  const lessonData =
-    serverLockState &&
-    serverLockState[sectionId] &&
-    serverLockState[sectionId].lessons &&
-    serverLockState[sectionId].lessons[lessonId];
+function extractLockData(
+  serverLockState: LockStatusResponse | null,
+  sectionId: number,
+  lessonId: number
+): LockState {
+  const lessonData = serverLockState?.[sectionId]?.lessons?.[lessonId] ?? [];
+
   if (!lessonData) {
     return [];
   }
@@ -66,12 +87,12 @@ function extractLockData(serverLockState, sectionId, lessonId) {
 
 /**
  * Updates the server so that its lock state matches newLockState.
- * @param {LockState} previousLockState
- * @param {LockState} newLockState
- * @param {string} csrfToken
- * @returns {Promise<Response>}
  */
-export function saveLockState(previousLockState, newLockState, csrfToken) {
+export function saveLockState(
+  previousLockState: LockState,
+  newLockState: LockState,
+  csrfToken: string
+) {
   const lockStateChanges = newLockState
     .filter((item, index) => !_.isEqual(item, previousLockState[index]))
     .map(item => ({
@@ -93,10 +114,11 @@ export function saveLockState(previousLockState, newLockState, csrfToken) {
 
 /**
  * Converts an object with locked and readonly_answers fields to a LockStatus enum.
- * @param {{locked: boolean, readonly_answers: boolean}}
- * @returns {LockStatus}
  */
-function toLockStatus(lockData) {
+function toLockStatus(lockData: {
+  locked: boolean;
+  readonly_answers: boolean;
+}): LockStatusValue {
   return lockData.locked
     ? LockStatus.Locked
     : lockData.readonly_answers

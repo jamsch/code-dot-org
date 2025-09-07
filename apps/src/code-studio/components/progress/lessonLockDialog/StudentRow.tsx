@@ -1,13 +1,24 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import {LockStatus} from '@cdo/apps/code-studio/components/progress/lessonLockDialog/LessonLockDataApi';
 import color from '@cdo/apps/util/color';
 
-const StudentRow = ({index, name, lockStatus, handleRadioChange}) => {
-  const radioChangeEvent = event => {
+interface StudentRowProps {
+  index: number;
+  name: string;
+  lockStatus: typeof LockStatus;
+  handleRadioChange: (index: number, lockStatus: typeof LockStatus) => void;
+}
+
+const StudentRow = ({
+  index,
+  name,
+  lockStatus,
+  handleRadioChange,
+}: StudentRowProps) => {
+  const radioChangeEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
     const modifiedIndex = parseInt(event.target.name, 10);
-    const lockStatus = event.target.value;
+    const lockStatus = event.target.value as typeof LockStatus;
     handleRadioChange(modifiedIndex, lockStatus);
   };
 
@@ -23,7 +34,7 @@ const StudentRow = ({index, name, lockStatus, handleRadioChange}) => {
       >
         <input
           type="radio"
-          name={index}
+          name={index.toString()}
           value={LockStatus.Locked}
           checked={lockStatus === LockStatus.Locked}
           onChange={radioChangeEvent}
@@ -38,7 +49,7 @@ const StudentRow = ({index, name, lockStatus, handleRadioChange}) => {
       >
         <input
           type="radio"
-          name={index}
+          name={index.toString()}
           value={LockStatus.Editable}
           checked={lockStatus === LockStatus.Editable}
           onChange={radioChangeEvent}
@@ -53,7 +64,7 @@ const StudentRow = ({index, name, lockStatus, handleRadioChange}) => {
       >
         <input
           type="radio"
-          name={index}
+          name={index.toString()}
           value={LockStatus.ReadonlyAnswers}
           checked={lockStatus === LockStatus.ReadonlyAnswers}
           onChange={radioChangeEvent}
@@ -61,13 +72,6 @@ const StudentRow = ({index, name, lockStatus, handleRadioChange}) => {
       </td>
     </tr>
   );
-};
-
-StudentRow.propTypes = {
-  index: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  lockStatus: PropTypes.oneOf(Object.values(LockStatus)).isRequired,
-  handleRadioChange: PropTypes.func.isRequired,
 };
 
 const styles = {
@@ -83,6 +87,6 @@ const styles = {
   selectedCell: {
     backgroundColor: color.lightest_teal,
   },
-};
+} satisfies Record<string, React.CSSProperties>;
 
 export default StudentRow;

@@ -197,7 +197,9 @@ export const setUnitSummaryReduxData = (
     );
   }
 
-  dispatch(setVerifiedResources(!!unitData.has_verified_resources));
+  if (unitData.has_verified_resources) {
+    dispatch(setVerifiedResources());
+  }
 
   if (unitData.is_verified_instructor) {
     dispatch(setVerified());

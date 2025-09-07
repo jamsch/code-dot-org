@@ -1,13 +1,13 @@
 import $ from 'jquery';
 import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React, {useState, useEffect} from 'react';
-import {connect} from 'react-redux';
+import React, {useState, useEffect, useCallback} from 'react';
 
 import {
   LockStatus,
   useGetLockState,
   saveLockState,
+  type UserLockState,
+  type LockStatusValue,
 } from '@cdo/apps/code-studio/components/progress/lessonLockDialog/LessonLockDataApi';
 import SkeletonRows from '@cdo/apps/code-studio/components/progress/lessonLockDialog/SkeletonRows';
 import StudentRow from '@cdo/apps/code-studio/components/progress/lessonLockDialog/StudentRow';
@@ -16,27 +16,77 @@ import BaseDialog from '@cdo/apps/templates/BaseDialog';
 import {NO_SECTION} from '@cdo/apps/templates/teacherDashboard/teacherSectionsRedux';
 import {teacherDashboardUrl} from '@cdo/apps/templates/teacherDashboard/urlHelpers';
 import color from '@cdo/apps/util/color';
+import {useAppDispatch, useAppSelector} from '@cdo/apps/util/reduxHooks';
 import i18n from '@cdo/locale';
 
-import {refetchSectionLockStatus} from '../../../lessonLockRedux';
+import {refetchSectionLockStatus as refetchSectionLockStatusAction} from '../../../lessonLockRedux';
 import progressStyles from '../progressStyles';
 import SectionSelector from '../SectionSelector';
 
-function LessonLockDialog({
+interface LessonLockDialogProps {
+  unitId: number;
+  lessonId: number;
+  handleClose: () => void;
+  lessonIsHidden: boolean;
+}
+export default function LessonLockDialog({
   unitId,
   lessonId,
   handleClose,
+  lessonIsHidden,
+}: LessonLockDialogProps) {
+  const selectedSectionId = useAppSelector(
+    state => state.teacherSections.selectedSectionId
+  );
+
+  const dispatch = useAppDispatch();
+
+  const refetchSectionLockStatusCallback = useCallback(
+    (sectionId: number, unitId: number) =>
+      dispatch(refetchSectionLockStatusAction(sectionId, unitId)),
+    [dispatch]
+  );
+
+  if (selectedSectionId === null) {
+    console.warn('No section found for LessonLockDialog');
+    return null;
+  }
+
+  return (
+    <UnconnectedLessonLockDialog
+      unitId={unitId}
+      lessonId={lessonId}
+      handleClose={handleClose}
+      lessonIsHidden={lessonIsHidden}
+      selectedSectionId={selectedSectionId}
+      refetchSectionLockStatus={refetchSectionLockStatusCallback}
+    />
+  );
+}
+
+type UnconnectedLessonLockDialogProps = LessonLockDialogProps & {
+  selectedSectionId: number;
+  refetchSectionLockStatus: (
+    sectionId: number,
+    unitId: number
+  ) => Promise<void>;
+};
+
+export const UnconnectedLessonLockDialog = ({
+  unitId,
+  lessonId,
+  handleClose,
+  lessonIsHidden,
   selectedSectionId,
   refetchSectionLockStatus,
-  lessonIsHidden,
-}) {
+}: UnconnectedLessonLockDialogProps) => {
   const {loading, serverLockState} = useGetLockState(
     unitId,
     lessonId,
     selectedSectionId
   );
 
-  const [clientLockState, setClientLockState] = useState([]);
+  const [clientLockState, setClientLockState] = useState<UserLockState[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
@@ -51,7 +101,7 @@ function LessonLockDialog({
   //
   // Event handlers
   //
-  const setAllLockStatus = lockStatus => {
+  const setAllLockStatus = (lockStatus: LockStatusValue) => {
     setClientLockState(clientLockState =>
       clientLockState.map(item => ({...item, lockStatus}))
     );
@@ -69,7 +119,10 @@ function LessonLockDialog({
     window.open(assessmentsUrl, '_blank', 'noopener,noreferrer');
   };
 
-  const handleRadioChange = (modifiedIndex, lockStatus) => {
+  const handleRadioChange = (
+    modifiedIndex: number,
+    lockStatus: LockStatusValue
+  ) => {
     setClientLockState(clientLockState =>
       clientLockState.map((item, index) => {
         if (index !== modifiedIndex) {
@@ -95,7 +148,7 @@ function LessonLockDialog({
   const sendSave = async () => {
     setSaving(true);
     setError(null);
-    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+    const csrfToken = $('meta[name="csrf-token"]').attr('content') ?? '';
     const saveLockStateResponse = await saveLockState(
       serverLockState,
       clientLockState,
@@ -286,17 +339,6 @@ function LessonLockDialog({
       </div>
     </BaseDialog>
   );
-}
-
-LessonLockDialog.propTypes = {
-  unitId: PropTypes.number.isRequired,
-  lessonId: PropTypes.number.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  lessonIsHidden: PropTypes.bool,
-
-  // Provided by redux
-  selectedSectionId: PropTypes.number,
-  refetchSectionLockStatus: PropTypes.func.isRequired,
 };
 
 const styles = {
@@ -325,7 +367,7 @@ const styles = {
     backgroundColor: color.teal,
     padding: 10,
     fontSize: '100%',
-    ...fontConstants['main-font-regular'],
+    ...(fontConstants['main-font-regular'] as React.CSSProperties),
   },
   descriptionText: {
     marginTop: 10,
@@ -351,17 +393,4 @@ const styles = {
     fontStyle: 'italic',
     marginBottom: 10,
   },
-};
-
-export const UnconnectedLessonLockDialog = LessonLockDialog;
-
-export default connect(
-  state => ({
-    selectedSectionId: state.teacherSections.selectedSectionId,
-  }),
-  dispatch => ({
-    refetchSectionLockStatus(sectionId, lockStatus) {
-      dispatch(refetchSectionLockStatus(sectionId, lockStatus));
-    },
-  })
-)(LessonLockDialog);
+} satisfies Record<string, React.CSSProperties>;

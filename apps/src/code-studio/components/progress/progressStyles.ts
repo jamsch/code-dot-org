@@ -1,6 +1,6 @@
 import color from '../../../util/color';
 
-export const createOutline = color => {
+export const createOutline = (color: string) => {
   return `
     ${color} 0 1px,
     ${color} 1px 1px,
@@ -19,7 +19,7 @@ const baseButtonStyle = {
   paddingLeft: 10,
   paddingRight: 10,
   whiteSpace: 'nowrap',
-};
+} satisfies React.CSSProperties;
 
 const progressStyles = {
   baseButton: baseButtonStyle,
@@ -36,5 +36,6 @@ const progressStyles = {
     color: color.dark_charcoal,
     borderColor: color.lighter_gray,
   }),
-};
+} satisfies Record<string, React.CSSProperties>;
+
 export default progressStyles;

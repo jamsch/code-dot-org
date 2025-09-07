@@ -325,8 +325,8 @@ const refreshSectionLockStatus = (sections, sectionId) => ({
 });
 
 export const refetchSectionLockStatus = (sectionId, scriptId) => {
-  return dispatch => {
-    $.ajax('/api/lock_status', {
+  return async dispatch => {
+    await $.ajax('/api/lock_status', {
       data: {script_id: scriptId},
     })
       .done(data => {

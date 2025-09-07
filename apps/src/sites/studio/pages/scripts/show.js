@@ -62,7 +62,7 @@ function initPage() {
   }
 
   if (scriptData.has_verified_resources) {
-    store.dispatch(setVerifiedResources(true));
+    store.dispatch(setVerifiedResources());
   }
 
   if (scriptData.is_verified_instructor) {

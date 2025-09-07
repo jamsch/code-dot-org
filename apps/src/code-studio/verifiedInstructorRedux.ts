@@ -1,10 +1,17 @@
 const SET_VERIFIED = 'verifiedInstructor/SET_VERIFIED';
 const SET_VERIFIED_RESOURCES = 'verifiedInstructor/SET_VERIFIED_RESOURCES';
 
-export const setVerified = () => ({type: SET_VERIFIED});
-export const setVerifiedResources = hasVerifiedResources => ({
-  type: SET_VERIFIED_RESOURCES,
-});
+export const setVerified = () => {
+  return {
+    type: SET_VERIFIED,
+  } as const;
+};
+
+export const setVerifiedResources = () => {
+  return {
+    type: SET_VERIFIED_RESOURCES,
+  } as const;
+};
 
 const initialState = {
   isVerified: false,
@@ -13,7 +20,14 @@ const initialState = {
   hasVerifiedResources: false,
 };
 
-export default function verifiedInstructor(state = initialState, action) {
+type VerifiedInstructorAction =
+  | ReturnType<typeof setVerified>
+  | ReturnType<typeof setVerifiedResources>;
+
+export default function verifiedInstructor(
+  state = initialState,
+  action: VerifiedInstructorAction
+) {
   if (action.type === SET_VERIFIED) {
     return {
       ...state,
