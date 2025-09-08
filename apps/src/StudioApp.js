@@ -91,6 +91,8 @@ import trackEvent from './util/trackEvent';
 import * as utils from './utils';
 import {parseElement as parseXmlElement} from './xml';
 
+/** @typedef {import('@cdo/apps/code-studio/appOptions').AppOptionsConfig} AppOptionsConfig */
+
 var codegen = require('./lib/tools/jsinterpreter/codegen');
 
 /**
@@ -309,7 +311,7 @@ StudioApp.prototype.configure = function (options) {
 };
 
 /**
- * @param {AppOptionsConfig}
+ * @param {AppOptionsConfig} config
  */
 StudioApp.prototype.hasInstructionsToShow = function (config) {
   return !!(
@@ -321,6 +323,8 @@ StudioApp.prototype.hasInstructionsToShow = function (config) {
 
 /**
  * Given the studio app config object, show shared app warnings.
+ *
+ * @param {AppOptionsConfig} config
  */
 function showWarnings(config) {
   shareWarnings.checkSharedAppWarnings({
@@ -337,7 +341,7 @@ function showWarnings(config) {
 /**
  * Common startup tasks for all blockly and droplet apps. Happens
  * after configure.
- * @param {AppOptionsConfig}
+ * @param {AppOptionsConfig} config
  */
 StudioApp.prototype.init = function (config) {
   if (!config) {
@@ -1081,6 +1085,9 @@ StudioApp.prototype.reset = function (shouldPlayOpeningAnimation) {
  */
 StudioApp.prototype.runButtonClick = function () {};
 
+/**
+ * @param {(event: unknown) => void} newHandler
+ */
 StudioApp.prototype.addChangeHandler = function (newHandler) {
   if (!this.changeHandlers) {
     this.changeHandlers = [];

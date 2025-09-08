@@ -10,8 +10,18 @@ import {apiValidateType, OPTIONAL, outputWarning} from './javascriptMode';
  * Inject an executeCmd method so this mini-library can be used in both
  * App Lab and Game Lab
  */
-let executeCmd;
-export function injectExecuteCmd(fn) {
+let executeCmd: (
+  id: string | null,
+  name: string,
+  opts: Record<string, unknown>
+) => boolean;
+export function injectExecuteCmd(
+  fn: (
+    id: string | null,
+    name: string,
+    opts: Record<string, unknown>
+  ) => boolean
+) {
   executeCmd = fn;
 }
 
@@ -24,21 +34,24 @@ export const MAX_SPEECH_TEXT_LENGTH = 750;
  * Must be mixed in to the app's command list (see applab/commands.js)
  */
 export const commands = {
-  /**
-   * Start playing a sound.
-   * @param {string} opts.url The sound to play.
-   * @param {boolean} [opts.loop] Whether to repeat the sound forever
-   * TODO: Implement additional arguments as part of Sound Library Work
-   *       Spec: https://docs.google.com/document/d/11mpYgmomALyAr53BQl2Ufx0ZYXoMAswqlQBA0aRuNag/edit#heading=h.6uzt0nqaaco
-   * _@param {boolean} [opts.allowMultiple] If false (default) this call will
-   *        stop other instances of the same sound from playing.  If true,
-   *        multiple instances of the sound may be played simultaneously.
-   * _@param {function} [opts.callback] Called back when the sound starts playing
-   *        with an argument of true. If the sound fails to play, called back
-   *        with an argument of false.
-   * _@param {function} [opts.onEnded] Called back when the sound stops playing
-   */
-  playSound(opts) {
+  playSound(opts: {
+    /** The sound to play. */
+    url: string;
+    /** Whether to repeat the sound forever. */
+    loop?: boolean;
+    /**
+     * If false (default) this call will stop other instances of the same sound from playing.
+     * If true, multiple instances of the sound may be played simultaneously.
+     *
+     * TODO: Implement additional arguments as part of Sound Library Work
+     * Spec: https://docs.google.com/document/d/11mpYgmomALyAr53BQl2Ufx0ZYXoMAswqlQBA0aRuNag/edit#heading=h.6uzt0nqaaco
+     */
+    allowMultiple?: boolean;
+    /** Called back when the sound starts playing with an argument of true. If the sound fails to play, called back with an argument of false. */
+    callback: (playSuccess: boolean) => void;
+    /** Called back when the sound stops playing. */
+    onEnded: () => void;
+  }) {
     const validUrl = apiValidateType(
       opts,
       'playSound',
@@ -112,9 +125,11 @@ export const commands = {
 
   /**
    * Stop playing a sound, or all sounds.
-   * @param {string} [opts.url] The sound to stop.  Stops all sounds if omitted.
    */
-  stopSound(opts) {
+  stopSound(opts: {
+    /** The sound to stop. Stop all sounds if omitted. */
+    url: string;
+  }) {
     const validUrl = apiValidateType(
       opts,
       'stopSound',
@@ -135,12 +150,17 @@ export const commands = {
   },
   /**
    * Start playing given text as speech.
-   * @param {string} opts.text The text to play as speech.
-   * @param {string} opts.gender The gender of the voice to play.
-   * @param {string} opts.language The language of the text to play.
-   * @param {function()} opts.onComplete Called when the sound is complete.
    */
-  async playSpeech(opts) {
+  async playSpeech(opts: {
+    /** The text to play as speech. */
+    text: string;
+    /** The gender of the voice to play. */
+    gender: string;
+    /** The language of the text to play. */
+    language: string;
+    /** Called when the sound is complete. */
+    onComplete: () => void;
+  }) {
     const validText = apiValidateType(
       opts,
       'playSpeech',
@@ -179,11 +199,15 @@ export const commands = {
     // appOptions.authenticityToken is only expected/used when using this block on a script_level.
     // This is because script_levels remove Rails' authenticity token from the DOM for caching purposes:
     // https://github.com/code-dot-org/code-dot-org/pull/5753
+    if (!appOptions) {
+      return;
+    }
     const {azureSpeechServiceVoices: voices, authenticityToken} = appOptions;
-    let {text, gender, language, onComplete} = opts;
+    let {text, gender, language} = opts;
+    const {onComplete} = opts;
 
     // Fall back to defaults if requested language/gender combination is not available.
-    if (!(voices[language] && voices[language][gender])) {
+    if (!(voices?.[language] && voices[language][gender])) {
       language = 'English';
       gender = 'female';
     }
@@ -198,9 +222,9 @@ export const commands = {
     const promise = azureTTS.createSoundPromise({
       text,
       gender,
-      locale: voices[language].locale,
+      locale: voices?.[language].locale,
       authenticityToken,
-      onFailure: message => outputWarning(message + '\n'),
+      onFailure: (message: string) => outputWarning(message + '\n'),
       onComplete: validOnComplete ? onComplete : null,
     });
     azureTTS.enqueueAndPlay(promise);
@@ -212,10 +236,17 @@ export const commands = {
  * arguments converted to an options object.
  */
 export const executors = {
-  playSound: (url, loop = false, callback) =>
-    executeCmd(null, 'playSound', {url, loop, callback}),
-  stopSound: url => executeCmd(null, 'stopSound', {url}),
-  playSpeech: (text, gender, language = 'English', onComplete) =>
-    executeCmd(null, 'playSpeech', {text, gender, language, onComplete}),
+  playSound: (
+    url: string,
+    loop = false,
+    callback: (playSuccess: boolean) => void
+  ) => executeCmd(null, 'playSound', {url, loop, callback}),
+  stopSound: (url: string) => executeCmd(null, 'stopSound', {url}),
+  playSpeech: (
+    text: string,
+    gender: string,
+    language = 'English',
+    onComplete: () => void
+  ) => executeCmd(null, 'playSpeech', {text, gender, language, onComplete}),
 };
 // Note to self - can we use _.zipObject to map argumentNames to arguments here?

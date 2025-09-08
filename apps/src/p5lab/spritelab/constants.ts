@@ -1,7 +1,7 @@
-/** @file Sprite Lab constants */
-var utils = require('@cdo/apps/utils');
+import type {BlocklyWrapperType} from '@cdo/apps/blockly/types';
+import {makeEnum} from '@cdo/apps/utils';
 
-export const LocationPickerMode = utils.makeEnum('IDLE', 'SELECTING');
+export const LocationPickerMode = makeEnum('IDLE', 'SELECTING');
 
 export const SpritelabReservedWords = [
   // p5 globals
@@ -54,7 +54,7 @@ export const SpritelabReservedWords = [
   'everyInterval',
 ];
 
-export const valueTypeTabShapeMap = function (blockly) {
+export const valueTypeTabShapeMap = function (blockly: BlocklyWrapperType) {
   return {
     [blockly.BlockValueType.SPRITE]: 'angle',
     [blockly.BlockValueType.BEHAVIOR]: 'rounded',
