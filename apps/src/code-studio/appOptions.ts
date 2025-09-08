@@ -215,20 +215,6 @@ export type LiveMilestoneResponse = MilestoneResponse & {
   level_source_image_url: string;
 };
 
-/**
- * @typedef {Object} MilestoneResponse
- * @property {?} script_id
- * @property {?} level_id
- * @property {AutoplayVideo} video_info
- * @property {string} redirect - path to 'next' level in the lesson/script sequence.
- * @property {{previous: {position: number, name: string}}} lesson_changing
- * @property {boolean} end_of_lesson_experience
- * @property {HintViewRequest[]} hint_view_requests
- * @property {string} hint_view_request_url
- * @property {string} message
- * @property {boolean} puzzle_ratings_enabled
- */
-
 type MilestoneResponse = {
   script_id: unknown;
   level_id: unknown;
