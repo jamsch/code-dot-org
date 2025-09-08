@@ -48,7 +48,7 @@ export const commands = {
      */
     allowMultiple?: boolean;
     /** Called back when the sound starts playing with an argument of true. If the sound fails to play, called back with an argument of false. */
-    callback: (playSuccess: boolean) => void;
+    callback?: (playSuccess: boolean) => void;
     /** Called back when the sound stops playing. */
     onEnded: () => void;
   }) {
