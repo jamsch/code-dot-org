@@ -61,6 +61,22 @@ declare interface Window {
   >;
 }
 
+/**
+ * Conditionally declared in `code-studio/initApp/loadApp.js`
+ *
+ * used by `audioApi.ts`
+ */
+declare const appOptions:
+  | undefined
+  | Partial<{
+      azureSpeechServiceVoices?: Record<
+        string,
+        Record<string, {locale: string}>
+      >;
+      authenticityToken?: string;
+      signedReplayLogUrl?: string;
+    }>;
+
 // Declaring dashboard as 'any' because it is not well documented.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const dashboard: any;

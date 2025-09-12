@@ -44,7 +44,7 @@ type LockStatusResponse = {
 export function useGetLockState(
   unitId: number,
   lessonId: number,
-  sectionId: number
+  sectionId: number | null
 ) {
   const {loading, data} = useFetch<LockStatusResponse>(
     `/api/lock_status?script_id=${unitId}`
@@ -69,9 +69,13 @@ export function useGetLockState(
  */
 function extractLockData(
   serverLockState: LockStatusResponse | null,
-  sectionId: number,
+  sectionId: number | null,
   lessonId: number
 ): LockState {
+  if (!sectionId) {
+    return [];
+  }
+
   const lessonData = serverLockState?.[sectionId]?.lessons?.[lessonId] ?? [];
 
   if (!lessonData) {

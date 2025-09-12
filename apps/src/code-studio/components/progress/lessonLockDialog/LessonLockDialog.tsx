@@ -47,11 +47,6 @@ export default function LessonLockDialog({
     [dispatch]
   );
 
-  if (selectedSectionId === null) {
-    console.warn('No section found for LessonLockDialog');
-    return null;
-  }
-
   return (
     <UnconnectedLessonLockDialog
       unitId={unitId}
@@ -65,7 +60,7 @@ export default function LessonLockDialog({
 }
 
 type UnconnectedLessonLockDialogProps = LessonLockDialogProps & {
-  selectedSectionId: number;
+  selectedSectionId: number | null;
   refetchSectionLockStatus: (
     sectionId: number,
     unitId: number
