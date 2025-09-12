@@ -6,22 +6,19 @@ import i18n from '@cdo/locale';
 
 import {apiValidateType, OPTIONAL, outputWarning} from './javascriptMode';
 
-/**
- * Inject an executeCmd method so this mini-library can be used in both
- * App Lab and Game Lab
- */
-let executeCmd: (
+type ExecuteCmd = (
   id: string | null,
   name: string,
   opts: Record<string, unknown>
 ) => boolean;
-export function injectExecuteCmd(
-  fn: (
-    id: string | null,
-    name: string,
-    opts: Record<string, unknown>
-  ) => boolean
-) {
+
+/**
+ * Inject an executeCmd method so this mini-library can be used in both
+ * App Lab and Game Lab
+ */
+let executeCmd: ExecuteCmd;
+
+export function injectExecuteCmd(fn: ExecuteCmd) {
   executeCmd = fn;
 }
 
