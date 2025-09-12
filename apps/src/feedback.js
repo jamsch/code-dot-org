@@ -51,8 +51,8 @@ module.exports = FeedbackUtils;
 
 /**
  * @typedef {Object} FeedbackOptions
- * @property {LiveMilestoneResponse} response
- * @property {TestResult} feedbackType
+ * @property {import('./code-studio/appOptions').LiveMilestoneResponse} response
+ * @property {import('./constants').TestResult} feedbackType
  * @property {string} message
  * @property {Level} level
  * @property {boolean} showingSharing
@@ -1032,7 +1032,7 @@ FeedbackUtils.prototype.getShowCodeComponent_ = function (
 
 /**
  * Determines whether the user can proceed to the next level, based on the level feedback.
- * @param {TestResult} feedbackType
+ * @param {import('./constants').TestResult} feedbackType
  * @return {boolean}
  */
 FeedbackUtils.prototype.canContinueToNextLevel = function (feedbackType) {
@@ -1043,7 +1043,7 @@ FeedbackUtils.prototype.canContinueToNextLevel = function (feedbackType) {
  * Determines whether we should prompt the user to show the given
  * feedback, rather than showing it to them automatically. Currently
  * only used for missing block feedback; may expand in the future
- * @param {TestResult} feedbackType
+ * @param {import('./constants').TestResult} feedbackType
  */
 FeedbackUtils.prototype.shouldPromptForHint = function (feedbackType) {
   return (

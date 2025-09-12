@@ -69,7 +69,7 @@ export default class AuthoredHints {
   }
 
   /**
-   * @param {LiveMilestoneResponse} response
+   * @param {import('./code-studio/appOptions').LiveMilestoneResponse} response
    */
   finishHints(response) {
     authoredHintUtils.finishHints({

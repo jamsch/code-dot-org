@@ -14,9 +14,7 @@ export const ResultType = {
   ERROR: -2, // The program generated an error.
 };
 
-/**
- * @typedef {number} TestResult
- */
+export type TestResult = number;
 
 /**
  * Enumeration of test results.
