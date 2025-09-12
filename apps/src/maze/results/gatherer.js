@@ -1,4 +1,4 @@
-import {TestResults} from '../../constants.js';
+import {TestResults} from '../../constants.ts';
 
 import ResultsHandler from './resultsHandler';
 

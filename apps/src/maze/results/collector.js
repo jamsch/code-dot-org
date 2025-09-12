@@ -1,6 +1,6 @@
 import experiments from '@cdo/apps/util/experiments';
 
-import {TestResults} from '../../constants.js';
+import {TestResults} from '../../constants.ts';
 import mazeMsg from '../locale';
 import {
   setCollectorMinRequired,

@@ -1,4 +1,4 @@
-import {HarvesterTerminationValue, TestResults} from '../../constants.js';
+import {HarvesterTerminationValue, TestResults} from '../../constants.ts';
 import mazeMsg from '../locale';
 
 import GathererHandler from './gatherer';

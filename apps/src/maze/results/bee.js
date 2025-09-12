@@ -1,7 +1,7 @@
 import {
   TestResults,
   BeeTerminationValue as TerminationValue,
-} from '../../constants.js';
+} from '../../constants.ts';
 import mazeMsg from '../locale';
 
 import GathererHandler from './gatherer';
