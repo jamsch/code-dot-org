@@ -34,6 +34,12 @@ export const MAX_SPEECH_TEXT_LENGTH = 750;
  * Must be mixed in to the app's command list (see applab/commands.js)
  */
 export const commands = {
+  /**
+   * Start playing a sound.
+   *
+   * TODO: Implement additional arguments as part of Sound Library Work
+   * Spec: https://docs.google.com/document/d/11mpYgmomALyAr53BQl2Ufx0ZYXoMAswqlQBA0aRuNag/edit#heading=h.6uzt0nqaaco
+   */
   playSound(opts: {
     /** The sound to play. */
     url: string;
@@ -42,15 +48,12 @@ export const commands = {
     /**
      * If false (default) this call will stop other instances of the same sound from playing.
      * If true, multiple instances of the sound may be played simultaneously.
-     *
-     * TODO: Implement additional arguments as part of Sound Library Work
-     * Spec: https://docs.google.com/document/d/11mpYgmomALyAr53BQl2Ufx0ZYXoMAswqlQBA0aRuNag/edit#heading=h.6uzt0nqaaco
      */
     allowMultiple?: boolean;
     /** Called back when the sound starts playing with an argument of true. If the sound fails to play, called back with an argument of false. */
     callback?: (playSuccess: boolean) => void;
     /** Called back when the sound stops playing. */
-    onEnded: () => void;
+    onEnded?: () => void;
   }) {
     const validUrl = apiValidateType(
       opts,
