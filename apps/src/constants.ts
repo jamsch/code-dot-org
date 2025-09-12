@@ -14,8 +14,6 @@ export const ResultType = {
   ERROR: -2, // The program generated an error.
 };
 
-export type TestResult = number;
-
 /**
  * Enumeration of test results.
  * EMPTY_BLOCK_FAIL and EMPTY_FUNCTION_BLOCK_FAIL can only occur if
@@ -107,7 +105,10 @@ export const TestResults = {
 
   REVIEW_REJECTED_RESULT: 1500,
   REVIEW_ACCEPTED_RESULT: 2000,
-};
+} as const;
+
+/** A value from the TestResults enum. */
+export type TestResult = (typeof TestResults)[keyof typeof TestResults];
 
 export const BeeTerminationValue = {
   FAILURE: false,

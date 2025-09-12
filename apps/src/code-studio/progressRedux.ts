@@ -10,7 +10,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 
 import {setVerified} from '@cdo/apps/code-studio/verifiedInstructorRedux';
-import {TestResults} from '@cdo/apps/constants';
+import {TestResult, TestResults} from '@cdo/apps/constants';
 import Lab2Registry from '@cdo/apps/lab2/Lab2Registry';
 import notifyLevelChange from '@cdo/apps/lab2/utils/notifyLevelChange';
 import {
@@ -380,7 +380,7 @@ export function sendSuccessReport(appType: string): AsyncProgressThunkAction {
 // Currently only used by Lab2 labs.
 export function sendProgressReport(
   appType: string,
-  result: TestResults
+  result: TestResult
 ): AsyncProgressThunkAction {
   return (dispatch, getState) => {
     return sendReportHelper(appType, result, dispatch, getState);
@@ -439,7 +439,7 @@ export const sendSubmitReport = createAsyncThunk<
 
 function sendReportHelper(
   appType: string,
-  result: number,
+  result: TestResult,
   dispatch: ThunkDispatch<RootState, undefined, AnyAction>,
   getState: () => RootState,
   extraData?: OptionalMilestoneData
