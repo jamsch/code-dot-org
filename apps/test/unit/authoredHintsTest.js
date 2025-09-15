@@ -1,24 +1,20 @@
-import sinon from 'sinon'; // eslint-disable-line no-restricted-imports
-
 import AuthoredHints from '@cdo/apps/authoredHints';
 import {TestResults} from '@cdo/apps/constants';
 import {registerReducers, stubRedux, restoreRedux} from '@cdo/apps/redux';
 import authoredHintsReducer from '@cdo/apps/redux/authoredHints';
 import * as utils from '@cdo/apps/utils';
 
-import {expect} from '../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 describe('Authored Hints', () => {
   // stub (and restore) redux and a utils method
   beforeEach(() => {
-    sinon.stub(utils, 'showGenericQtip').callsFake(() => {});
+    jest.spyOn(utils, 'showGenericQtip').mockImplementation(() => {});
     stubRedux();
     registerReducers({authoredHints: authoredHintsReducer});
   });
 
   afterEach(() => {
     restoreRedux();
-    utils.showGenericQtip.restore();
+    utils.showGenericQtip.mockRestore();
   });
 
   // set up structures to be tested
@@ -41,7 +37,7 @@ describe('Authored Hints', () => {
 
   describe('Just-in-Time Hint Prompt', () => {
     it('will not show the hint prompt by default', () => {
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.false;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(false);
     });
 
     const setUpStateToShowHintPrompt = () => {
@@ -52,33 +48,33 @@ describe('Authored Hints', () => {
 
     it('will show the hint prompt if conditions are met', () => {
       setUpStateToShowHintPrompt();
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.true;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(true);
     });
 
     it('will only show the hint prompt if ALL conditions are met', () => {
       setUpStateToShowHintPrompt();
       studioApp.lastTestResult = TestResults.MINIMUM_PASS_RESULT;
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.false;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(false);
 
       setUpStateToShowHintPrompt();
       studioApp.attempts =
         studioApp.config.level.hintPromptAttemptsThreshold - 1;
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.false;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(false);
     });
 
     it('only shows the prompt once for a given level', () => {
       setUpStateToShowHintPrompt();
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.true;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(true);
       authoredHints.showOnetimeHintPrompt();
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.false;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(false);
     });
 
     it('will show the prompt again on a new level', () => {
       setUpStateToShowHintPrompt();
       authoredHints.showOnetimeHintPrompt();
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.false;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(false);
       authoredHints.levelId_++;
-      expect(authoredHints.shouldShowOnetimeHintPrompt()).to.be.true;
+      expect(authoredHints.shouldShowOnetimeHintPrompt()).toBe(true);
     });
   });
 });

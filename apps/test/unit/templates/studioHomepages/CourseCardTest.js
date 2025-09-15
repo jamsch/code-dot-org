@@ -7,12 +7,6 @@ import isRtl, {setRtl} from '@cdo/apps/code-studio/isRtlRedux';
 import FontAwesome from '@cdo/apps/legacySharedComponents/FontAwesome';
 import CourseCard from '@cdo/apps/templates/studioHomepages/CourseCard';
 
-// eslint-disable-next-line no-restricted-imports
-import {
-  expect,
-  // assert
-} from '../../../util/reconfiguredChai';
-
 import {courses} from './homepagesTestData';
 
 const store = createStore(combineReducers({isRtl}));

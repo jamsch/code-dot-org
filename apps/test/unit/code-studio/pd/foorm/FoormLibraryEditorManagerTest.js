@@ -1,4 +1,3 @@
-import {assert} from 'chai'; // eslint-disable-line no-restricted-imports
 import {shallow} from 'enzyme'; // eslint-disable-line no-restricted-imports
 import React from 'react';
 import sinon from 'sinon'; // eslint-disable-line no-restricted-imports
@@ -58,9 +57,11 @@ describe('FoormLibraryEditorManager', () => {
   };
 
   it('keeps library question choice disabled and editor hidden on load', () => {
-    assert(wrapper.find(FoormEntityLoadButtons).at(1).prop('isDisabled'));
+    expect(
+      wrapper.find(FoormEntityLoadButtons).at(1).prop('isDisabled')
+    ).toBeTruthy();
 
-    assert.equal(wrapper.find(FoormEntityEditor).length, 0);
+    expect(wrapper.find(FoormEntityEditor).length).toBe(0);
   });
 
   it('enables library question choice and keeps editor hidden on library load', () => {
@@ -68,7 +69,9 @@ describe('FoormLibraryEditorManager', () => {
       sampleExistingLibraryData
     );
 
-    assert(wrapper.find(FoormEntityLoadButtons).at(1).prop('isDisabled'));
+    expect(
+      wrapper.find(FoormEntityLoadButtons).at(1).prop('isDisabled')
+    ).toBeTruthy();
 
     server.respond();
     // calls setFetchableLibraryQuestions which results in
@@ -79,8 +82,8 @@ describe('FoormLibraryEditorManager', () => {
       ],
     });
 
-    assert.isFalse(
-      wrapper.find(FoormEntityLoadButtons).at(1).prop('isDisabled')
+    expect(wrapper.find(FoormEntityLoadButtons).at(1).prop('isDisabled')).toBe(
+      false
     );
   });
 
@@ -91,7 +94,7 @@ describe('FoormLibraryEditorManager', () => {
       JSON.stringify(sampleExistingLibraryQuestionData),
     ]);
 
-    assert.equal(wrapper.find(FoormEntityEditor).length, 0);
+    expect(wrapper.find(FoormEntityEditor).length).toBe(0);
 
     wrapper.find(FoormEntityLoadButtons).at(0).prop('onSelect')(
       sampleExistingLibraryData
@@ -100,7 +103,7 @@ describe('FoormLibraryEditorManager', () => {
     server.respond();
     wrapper.update();
 
-    assert.equal(wrapper.find(FoormEntityEditor).length, 0);
+    expect(wrapper.find(FoormEntityEditor).length).toBe(0);
 
     wrapper.find(FoormEntityLoadButtons).at(1).prop('onSelect')(
       sampleExistingLibraryQuestionData
@@ -109,6 +112,6 @@ describe('FoormLibraryEditorManager', () => {
     server.respond();
     wrapper.update();
 
-    assert.equal(wrapper.find(FoormEntityEditor).length, 1);
+    expect(wrapper.find(FoormEntityEditor).length).toBe(1);
   });
 });

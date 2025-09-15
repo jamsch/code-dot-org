@@ -1,5 +1,3 @@
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimVizElement = require('@cdo/apps/netsim/NetSimVizElement');
 
 describe('NetSimVizElement', function () {
@@ -11,17 +9,17 @@ describe('NetSimVizElement', function () {
     });
 
     it('has default properties', function () {
-      assert.equal(0, vizElement.posX);
-      assert.equal(0, vizElement.posY);
-      assert.equal(1, vizElement.scale);
-      assert.deepEqual([], vizElement.tweens_);
-      assert.isFalse(vizElement.isDying());
-      assert.isFalse(vizElement.isDead());
+      expect(0).toBe(vizElement.posX);
+      expect(0).toBe(vizElement.posY);
+      expect(1).toBe(vizElement.scale);
+      expect([]).toEqual(vizElement.tweens_);
+      expect(vizElement.isDying()).toBe(false);
+      expect(vizElement.isDead()).toBe(false);
     });
 
     it('immediately creates SVG root element', function () {
       var root = vizElement.getRoot();
-      assert.equal('[object SVGElement]', root[0].toString());
+      expect('[object SVGElement]').toBe(root[0].toString());
     });
   });
 });

@@ -1,8 +1,5 @@
 /** @file Exports a set of tests that verify the MakerBoard interface */
 import {EventEmitter} from 'events'; // see node-libs-browser
-import sinon from 'sinon'; // eslint-disable-line no-restricted-imports
-
-import {expect} from '../../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
 
 /**
  * Interface that our board controllers must implement to be usable with
@@ -39,7 +36,7 @@ export function itImplementsTheMakerBoardInterface(
     });
 
     it('is an EventEmitter', () => {
-      expect(board).to.be.an.instanceOf(EventEmitter);
+      expect(board).toBeInstanceOf(EventEmitter);
     });
 
     /**
@@ -52,7 +49,7 @@ export function itImplementsTheMakerBoardInterface(
     describe('connect()', () => {
       it('returns a Promise', () => {
         const retVal = board.connect();
-        expect(retVal.then).to.be.a('function');
+        expect(typeof retVal.then).toBe('function');
         return retVal;
       });
     });
@@ -66,7 +63,7 @@ export function itImplementsTheMakerBoardInterface(
     describe('destroy()', () => {
       it(`returns a promise`, () => {
         const retVal = board.destroy();
-        expect(retVal).to.be.an.instanceOf(Promise);
+        expect(retVal).toBeInstanceOf(Promise);
         return retVal;
       });
     });
@@ -89,7 +86,7 @@ export function itImplementsTheMakerBoardInterface(
           createGlobalProperty: function (key, value) {
             jsInterpreter.globalProperties[key] = value;
           },
-          addCustomMarshalObject: sinon.spy(),
+          addCustomMarshalObject: jest.fn(),
         };
 
         return board.connect();
@@ -97,7 +94,7 @@ export function itImplementsTheMakerBoardInterface(
 
       it(`doesn't return anything`, () => {
         const retVal = board.installOnInterpreter(jsInterpreter);
-        expect(retVal).to.be.undefined;
+        expect(retVal).toBeUndefined();
       });
     });
 
@@ -111,7 +108,7 @@ export function itImplementsTheMakerBoardInterface(
       it(`doesn't return anything`, () => {
         return board.connect().then(() => {
           const retVal = board.pinMode(11, 1023);
-          expect(retVal).to.be.undefined;
+          expect(retVal).toBeUndefined();
         });
       });
     });
@@ -126,7 +123,7 @@ export function itImplementsTheMakerBoardInterface(
       it(`doesn't return anything`, () => {
         return board.connect().then(() => {
           const retVal = board.digitalWrite(11, 1023);
-          expect(retVal).to.be.undefined;
+          expect(retVal).toBeUndefined();
         });
       });
     });
@@ -144,12 +141,12 @@ export function itImplementsTheMakerBoardInterface(
 
       it(`doesn't return anything`, () => {
         const retVal = board.digitalRead(11, () => {});
-        expect(retVal).to.be.undefined;
+        expect(retVal).toBeUndefined();
       });
 
       it(`calls callback with value`, done => {
         board.digitalRead(11, value => {
-          expect(value).to.be.a('number');
+          expect(typeof value).toBe('number');
           done();
         });
       });
@@ -165,7 +162,7 @@ export function itImplementsTheMakerBoardInterface(
       it(`doesn't return anything`, () => {
         return board.connect().then(() => {
           const retVal = board.analogWrite(11, () => {});
-          expect(retVal).to.be.undefined;
+          expect(retVal).toBeUndefined();
         });
       });
     });
@@ -182,12 +179,12 @@ export function itImplementsTheMakerBoardInterface(
       });
       it(`doesn't return anything`, () => {
         const retVal = board.analogRead(11, () => {});
-        expect(retVal).to.be.undefined;
+        expect(retVal).toBeUndefined();
       });
 
       it(`calls callback with value`, done => {
         board.analogRead(11, value => {
-          expect(value).to.be.a('number');
+          expect(typeof value).toBe('number');
           done();
         });
       });
@@ -200,7 +197,7 @@ export function itImplementsTheMakerBoardInterface(
      */
     describe(`boardConnected()`, () => {
       it(`returns a boolean`, () => {
-        expect(board.boardConnected()).to.be.a('boolean');
+        expect(typeof board.boardConnected()).toBe('boolean');
       });
     });
 
@@ -217,10 +214,10 @@ export function itImplementsTheMakerBoardInterface(
 
       it(`returns an Led component`, () => {
         const led = board.createLed(10);
-        expect(led.on).to.be.a('function');
-        expect(led.off).to.be.a('function');
-        expect(led.toggle).to.be.a('function');
-        expect(led.blink).to.be.a('function');
+        expect(typeof led.on).toBe('function');
+        expect(typeof led.off).toBe('function');
+        expect(typeof led.toggle).toBe('function');
+        expect(typeof led.blink).toBe('function');
       });
     });
 
@@ -244,8 +241,8 @@ export function itImplementsTheMakerBoardInterface(
       it(`returns a Button component`, () => {
         const button = board.createButton(10);
         // Check the basic button shape
-        expect(button).to.be.an.instanceOf(EventEmitter);
-        expect(button).to.have.property('isPressed');
+        expect(button).toBeInstanceOf(EventEmitter);
+        expect(button).toHaveProperty('isPressed');
       });
     });
   });

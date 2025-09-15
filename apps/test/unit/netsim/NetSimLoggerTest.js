@@ -1,5 +1,3 @@
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimLogger = require('@cdo/apps/netsim/NetSimLogger');
 
 // Simple console that only has 'log' method
@@ -54,7 +52,7 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.isUndefined(fauxConsole.transcript);
+    expect(fauxConsole.transcript).toBeUndefined();
   });
 
   it("pipes all output to 'log' on older consoles", function () {
@@ -65,8 +63,7 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.equal(
-      fauxConsole.transcript,
+    expect(fauxConsole.transcript).toBe(
       'LOG:' +
         infoMsg +
         '\n' +
@@ -87,8 +84,7 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.equal(
-      fauxConsole.transcript,
+    expect(fauxConsole.transcript).toBe(
       'INFO:' +
         infoMsg +
         '\n' +
@@ -106,7 +102,7 @@ describe('NetSimLogger', function () {
     var logger = new NetSimLogger(fauxConsole, LogLevel.VERBOSE);
 
     logger.log(logMsg);
-    assert.equal(fauxConsole.transcript, 'INFO:' + logMsg + '\n');
+    expect(fauxConsole.transcript).toBe('INFO:' + logMsg + '\n');
   });
 
   it('log method respects info, error, warn settings', function () {
@@ -114,15 +110,15 @@ describe('NetSimLogger', function () {
     var logger = new NetSimLogger(fauxConsole, LogLevel.VERBOSE);
 
     logger.log(infoMsg, LogLevel.INFO);
-    assert.equal(fauxConsole.transcript, 'INFO:' + infoMsg + '\n');
+    expect(fauxConsole.transcript).toBe('INFO:' + infoMsg + '\n');
 
     fauxConsole.transcript = '';
     logger.log(warnMsg, LogLevel.WARN);
-    assert.equal(fauxConsole.transcript, 'WARN:' + warnMsg + '\n');
+    expect(fauxConsole.transcript).toBe('WARN:' + warnMsg + '\n');
 
     fauxConsole.transcript = '';
     logger.log(errorMsg, LogLevel.ERROR);
-    assert.equal(fauxConsole.transcript, 'ERROR:' + errorMsg + '\n');
+    expect(fauxConsole.transcript).toBe('ERROR:' + errorMsg + '\n');
   });
 
   it('log method uses LOG endpoint for bad LogLevel argument', function () {
@@ -130,7 +126,7 @@ describe('NetSimLogger', function () {
     var logger = new NetSimLogger(fauxConsole, LogLevel.VERBOSE);
 
     logger.log(logMsg, 42);
-    assert.equal(fauxConsole.transcript, 'LOG:' + logMsg + '\n');
+    expect(fauxConsole.transcript).toBe('LOG:' + logMsg + '\n');
   });
 
   it('Shows all messages at VERBOSE log level', function () {
@@ -141,8 +137,7 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.equal(
-      fauxConsole.transcript,
+    expect(fauxConsole.transcript).toBe(
       'INFO:' +
         infoMsg +
         '\n' +
@@ -163,8 +158,7 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.equal(
-      fauxConsole.transcript,
+    expect(fauxConsole.transcript).toBe(
       'INFO:' +
         infoMsg +
         '\n' +
@@ -185,8 +179,7 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.equal(
-      fauxConsole.transcript,
+    expect(fauxConsole.transcript).toBe(
       'WARN:' + warnMsg + '\n' + 'ERROR:' + errorMsg + '\n'
     );
   });
@@ -199,7 +192,7 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.equal(fauxConsole.transcript, 'ERROR:' + errorMsg + '\n');
+    expect(fauxConsole.transcript).toBe('ERROR:' + errorMsg + '\n');
   });
 
   it('Omits all messages at NONE log level', function () {
@@ -210,6 +203,6 @@ describe('NetSimLogger', function () {
     logger.warn(warnMsg);
     logger.error(errorMsg);
 
-    assert.strictEqual(fauxConsole.transcript, '');
+    expect(fauxConsole.transcript).toBe('');
   });
 });

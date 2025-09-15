@@ -1,11 +1,8 @@
 import {mount} from 'enzyme'; // eslint-disable-line no-restricted-imports
 import $ from 'jquery';
 import React from 'react';
-import sinon from 'sinon'; // eslint-disable-line no-restricted-imports
 
 import {UnconnectedSortByNameDropdown} from '@cdo/apps/templates/SortByNameDropdown';
-
-import {expect} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
 
 describe('SortByNameDropdown', () => {
   it('renders dropdown', () => {
@@ -15,8 +12,8 @@ describe('SortByNameDropdown', () => {
         setSortByFamilyName={() => {}}
       />
     );
-    expect(wrapper.find('select').length).to.equal(1);
-    expect(wrapper.find('select').props().value).to.equal('displayName');
+    expect(wrapper.find('select').length).toBe(1);
+    expect(wrapper.find('select').props().value).toBe('displayName');
   });
   it('renders dropdown with family name selected', () => {
     const wrapper = mount(
@@ -25,8 +22,8 @@ describe('SortByNameDropdown', () => {
         setSortByFamilyName={() => {}}
       />
     );
-    expect(wrapper.find('select').length).to.equal(1);
-    expect(wrapper.find('select').props().value).to.equal('familyName');
+    expect(wrapper.find('select').length).toBe(1);
+    expect(wrapper.find('select').props().value).toBe('familyName');
   });
 
   it("saves the sort mode setting to the user's preferences", () => {
@@ -34,9 +31,9 @@ describe('SortByNameDropdown', () => {
     const unitName = 'course1';
     const source = 'TeacherPanel';
 
-    sinon.spy($, 'post');
+    jest.spyOn($, 'post');
 
-    const setSortSpy = sinon.spy();
+    const setSortSpy = jest.fn();
 
     const wrapper = mount(
       <UnconnectedSortByNameDropdown
@@ -48,22 +45,18 @@ describe('SortByNameDropdown', () => {
       />
     );
 
-    expect(wrapper.find('select').props().value).to.equal('displayName');
+    expect(wrapper.find('select').props().value).toBe('displayName');
 
     wrapper.find('select').simulate('change', {target: {value: 'familyName'}});
 
-    expect($.post).to.have.been.calledOnceWith(
-      '/api/v1/users/sort_by_family_name',
-      {
-        sort_by_family_name: true,
-      }
-    );
-    expect(setSortSpy).to.have.been.calledOnceWith(
-      true,
-      sectionId,
-      unitName,
-      source
-    );
-    $.post.restore();
+    expect($.post).toHaveBeenCalledTimes(1);
+
+    expect($.post).toHaveBeenCalledWith('/api/v1/users/sort_by_family_name', {
+      sort_by_family_name: true,
+    });
+
+    expect(setSortSpy).toHaveBeenCalledTimes(1);
+    expect(setSortSpy).toHaveBeenCalledWith(true, sectionId, unitName, source);
+    $.post.mockRestore();
   });
 });

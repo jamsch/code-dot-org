@@ -1,4 +1,3 @@
-import {assert} from 'chai'; // eslint-disable-line no-restricted-imports
 import {mount} from 'enzyme'; // eslint-disable-line no-restricted-imports
 import React from 'react';
 import {Provider} from 'react-redux';
@@ -18,7 +17,6 @@ import {
 import foorm, {
   setFormData,
 } from '../../../../../src/code-studio/pd/foorm/editor/foormEditorRedux';
-import {expect} from '../../../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
 import {allowConsoleWarnings} from '../../../../util/throwOnConsole';
 
 global.$ = require('jquery');
@@ -123,21 +121,21 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     const saveButton = saveBar.find('button').at(2);
-    expect(saveButton.contains('Save')).to.be.true;
+    expect(saveButton.contains('Save')).toBe(true);
     saveButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     server.respond();
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     //check that last saved message is showing
-    expect(wrapper.find('.lastSavedMessage').length).to.equal(1);
+    expect(wrapper.find('.lastSavedMessage').length).toBe(1);
   });
 
   it('can publish form', () => {
@@ -155,18 +153,15 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     const publishButton = saveBar.find('button').at(0);
-    expect(publishButton.contains('Publish')).to.be.true;
+    expect(publishButton.contains('Publish')).toBe(true);
     publishButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     // check that modal pops up
-    assert(
-      wrapper.find('ConfirmationDialog').at(1).prop('show'),
-      'Publish ConfirmationDialog is showing'
-    );
+    expect(wrapper.find('ConfirmationDialog').at(1).prop('show')).toBeTruthy();
 
     // simulate save click. Cannot click on button itself because it is in the modal
     // which is outside the wrapper.
@@ -175,11 +170,11 @@ describe('FoormEntityEditor in Form editing mode', () => {
     server.respond();
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     //check that last saved message is showing
-    expect(wrapper.find('.lastSavedMessage').length).to.equal(1);
+    expect(wrapper.find('.lastSavedMessage').length).toBe(1);
   });
 
   it('shows save error', () => {
@@ -196,24 +191,24 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     const saveButton = saveBar.find('button').at(2);
-    expect(saveButton.contains('Save')).to.be.true;
+    expect(saveButton.contains('Save')).toBe(true);
     saveButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     server.respond();
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     //check that save error message is showing
-    expect(wrapper.find('.saveErrorMessage').length).to.equal(1);
+    expect(wrapper.find('.saveErrorMessage').length).toBe(1);
     expect(
       wrapper.find('.saveErrorMessage').contains('Error Saving: Save error')
-    ).to.be.true;
+    ).toBe(true);
   });
 
   it('save published form pops up warning message', () => {
@@ -232,18 +227,15 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     const saveButton = saveBar.find('button').at(1);
-    expect(saveButton.contains('Save')).to.be.true;
+    expect(saveButton.contains('Save')).toBe(true);
     saveButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     // check that modal pops up
-    assert(
-      wrapper.find('ConfirmationDialog').at(0).prop('show'),
-      'Save ConfirmationDialog is showing'
-    );
+    expect(wrapper.find('ConfirmationDialog').at(0).prop('show')).toBeTruthy();
 
     // simulate save click. Cannot click on button itself because it is in the modal
     // which is outside the wrapper.
@@ -252,11 +244,11 @@ describe('FoormEntityEditor in Form editing mode', () => {
     server.respond();
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     //check that last saved message is showing
-    expect(wrapper.find('.lastSavedMessage').length).to.equal(1);
+    expect(wrapper.find('.lastSavedMessage').length).toBe(1);
   });
 
   it('shows save as new version button for latest version', () => {
@@ -271,9 +263,9 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveNewVersionButton = saveBarButtons.at(0);
     const saveButton = saveBarButtons.at(1);
 
-    expect(saveNewVersionButton.contains('Save as New Version')).to.be.true;
-    expect(saveButton.contains('Save')).to.be.true;
-    expect(saveBarButtons.length).to.equal(2);
+    expect(saveNewVersionButton.contains('Save as New Version')).toBe(true);
+    expect(saveButton.contains('Save')).toBe(true);
+    expect(saveBarButtons.length).toBe(2);
   });
 
   it('hides save as new version button for not latest version', () => {
@@ -292,8 +284,8 @@ describe('FoormEntityEditor in Form editing mode', () => {
       .find('button');
     const saveButton = saveBarButtons.at(0);
 
-    expect(saveButton.contains('Save')).to.be.true;
-    expect(saveBarButtons.length).to.equal(1);
+    expect(saveButton.contains('Save')).toBe(true);
+    expect(saveBarButtons.length).toBe(1);
   });
 
   it('hides publish button for published survey', () => {
@@ -308,9 +300,9 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveNewVersionButton = saveBarButtons.at(0);
     const saveButton = saveBarButtons.at(1);
 
-    expect(saveNewVersionButton.contains('Publish')).to.be.false;
-    expect(saveButton.contains('Save')).to.be.true;
-    expect(saveBarButtons.length).to.equal(2);
+    expect(saveNewVersionButton.contains('Publish')).toBe(false);
+    expect(saveButton.contains('Save')).toBe(true);
+    expect(saveBarButtons.length).toBe(2);
   });
 
   it('can cancel save published form', () => {
@@ -322,29 +314,26 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     const saveButton = saveBar.find('button').at(1);
-    expect(saveButton.contains('Save')).to.be.true;
+    expect(saveButton.contains('Save')).toBe(true);
     saveButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     // check that modal pops up
-    assert(
-      wrapper.find('ConfirmationDialog').at(0).prop('show'),
-      'Save ConfirmationDialog is showing'
-    );
+    expect(wrapper.find('ConfirmationDialog').at(0).prop('show')).toBeTruthy();
 
     // simulate cancel click. Cannot click on button itself because it is in the modal
     // which is outside the wrapper.
     saveBar.instance().handleSaveCancel();
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     //check that last saved message is not showing
-    expect(wrapper.find('.lastSavedMessage').length).to.equal(0);
+    expect(wrapper.find('.lastSavedMessage').length).toBe(0);
   });
 
   it('can cancel publish form', () => {
@@ -356,29 +345,26 @@ describe('FoormEntityEditor in Form editing mode', () => {
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     const saveButton = saveBar.find('button').at(0);
-    expect(saveButton.contains('Publish')).to.be.true;
+    expect(saveButton.contains('Publish')).toBe(true);
     saveButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     // check that modal pops up
-    assert(
-      wrapper.find('ConfirmationDialog').at(1).prop('show'),
-      'Publish ConfirmationDialog is showing'
-    );
+    expect(wrapper.find('ConfirmationDialog').at(1).prop('show')).toBeTruthy();
 
     // simulate cancel click. Cannot click on button itself because it is in the modal
     // which is outside the wrapper.
     saveBar.instance().handleSaveCancel();
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     //check that last saved message is not showing
-    expect(wrapper.find('.lastSavedMessage').length).to.equal(0);
+    expect(wrapper.find('.lastSavedMessage').length).toBe(0);
   });
 
   it('can save new survey', () => {
@@ -394,24 +380,21 @@ describe('FoormEntityEditor in Form editing mode', () => {
     ]);
 
     // expect to see no form name
-    expect(wrapper.find('FoormEditorHeader').find('h2').length).to.equal(0);
+    expect(wrapper.find('FoormEditorHeader').find('h2').length).toBe(0);
 
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     // click save button
     const saveButton = saveBar.find('button').at(2);
-    expect(saveButton.contains('Save')).to.be.true;
+    expect(saveButton.contains('Save')).toBe(true);
     saveButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     // check that modal pops up
-    assert(
-      wrapper.find('Modal').at(0).prop('show'),
-      'Save New Form Modal is showing'
-    );
+    expect(wrapper.find('Modal').at(0).prop('show')).toBeTruthy();
 
     // simulate save click. Cannot click on button itself because it is in the modal
     // which is outside the wrapper.
@@ -420,11 +403,11 @@ describe('FoormEntityEditor in Form editing mode', () => {
     server.respond();
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     // check that last saved message is showing
-    expect(wrapper.find('.lastSavedMessage').length).to.equal(1);
+    expect(wrapper.find('.lastSavedMessage').length).toBe(1);
 
     // expect new form name to show up
     expect(
@@ -438,24 +421,21 @@ describe('FoormEntityEditor in Form editing mode', () => {
     store.dispatch(setFormData(sampleNewFormData));
 
     // expect to see no form name
-    expect(wrapper.find('FoormEditorHeader').find('h2').length).to.equal(0);
+    expect(wrapper.find('FoormEditorHeader').find('h2').length).toBe(0);
 
     const saveBar = wrapper.find(UnconnectedFoormFormSaveBar);
 
     // click save button
     const saveButton = saveBar.find('button').at(2);
-    expect(saveButton.contains('Save')).to.be.true;
+    expect(saveButton.contains('Save')).toBe(true);
     saveButton.simulate('click');
 
     // check the spinner is showing
-    expect(wrapper.find('.saveBar').find('FontAwesome').length).to.equal(1);
-    expect(saveBar.state().isSaving).to.equal(true);
+    expect(wrapper.find('.saveBar').find('FontAwesome').length).toBe(1);
+    expect(saveBar.state().isSaving).toBe(true);
 
     // check that modal pops up
-    assert(
-      wrapper.find('Modal').at(0).prop('show'),
-      'Save New Form Modal is showing'
-    );
+    expect(wrapper.find('Modal').at(0).prop('show')).toBeTruthy();
 
     // simulate cancel click. Cannot click on button itself because it is in the modal
     // which is outside the wrapper.
@@ -463,13 +443,13 @@ describe('FoormEntityEditor in Form editing mode', () => {
 
     saveBar.update();
 
-    expect(saveBar.find('FontAwesome').length).to.equal(0);
-    expect(saveBar.state().isSaving).to.equal(false);
+    expect(saveBar.find('FontAwesome').length).toBe(0);
+    expect(saveBar.state().isSaving).toBe(false);
 
     // check that last saved message is not showing
-    expect(wrapper.find('.lastSavedMessage').length).to.equal(0);
+    expect(wrapper.find('.lastSavedMessage').length).toBe(0);
 
     // expect no form name
-    expect(wrapper.find('FoormEditorHeader').find('h2').length).to.equal(0);
+    expect(wrapper.find('FoormEditorHeader').find('h2').length).toBe(0);
   });
 });

@@ -1,5 +1,4 @@
 import {assertOwnProperty} from '../../util/assertions';
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
 
 var NetSimWire = require('@cdo/apps/netsim/NetSimWire');
 
@@ -18,7 +17,7 @@ describe('NetSimWire', function () {
 
   it('uses the wire table', function () {
     var wire = new NetSimWire(testShard);
-    assert.deepEqual(wire.getTable(), testShard.wireTable);
+    expect(wire.getTable()).toEqual(testShard.wireTable);
   });
 
   it('has expected row structure and default values', function () {
@@ -26,22 +25,22 @@ describe('NetSimWire', function () {
     var row = wire.buildRow();
 
     assertOwnProperty(row, 'localNodeID');
-    assert.isUndefined(row.localNodeID);
+    expect(row.localNodeID).toBeUndefined();
 
     assertOwnProperty(row, 'remoteNodeID');
-    assert.isUndefined(row.remoteNodeID);
+    expect(row.remoteNodeID).toBeUndefined();
 
     assertOwnProperty(row, 'localAddress');
-    assert.isUndefined(row.localAddress);
+    expect(row.localAddress).toBeUndefined();
 
     assertOwnProperty(row, 'remoteAddress');
-    assert.isUndefined(row.remoteAddress);
+    expect(row.remoteAddress).toBeUndefined();
 
     assertOwnProperty(row, 'localHostname');
-    assert.isUndefined(row.localHostname);
+    expect(row.localHostname).toBeUndefined();
 
     assertOwnProperty(row, 'remoteHostname');
-    assert.isUndefined(row.remoteHostname);
+    expect(row.remoteHostname).toBeUndefined();
   });
 
   describe('static method create', function () {
@@ -71,8 +70,8 @@ describe('NetSimWire', function () {
       );
 
       wireTable.refresh(function (err, rows) {
-        assert.equal(rows[0].localNodeID, 1);
-        assert.equal(rows[0].remoteNodeID, 2);
+        expect(rows[0].localNodeID).toBe(1);
+        expect(rows[0].remoteNodeID).toBe(2);
       });
     });
 
@@ -84,7 +83,7 @@ describe('NetSimWire', function () {
           remoteNodeID: 0,
         },
         function (err, result) {
-          assert.instanceOf(result, NetSimWire, 'Result is a NetSimWire');
+          expect(result).toBeInstanceOf(NetSimWire);
         }
       );
     });
@@ -107,16 +106,16 @@ describe('NetSimWire', function () {
         testRow = row;
       }
     );
-    assert.isDefined(testRow, 'Failed to create test row');
+    expect(testRow).toBeDefined();
 
     // Instantiate wire
     var wire = new NetSimWire(testShard, testRow);
-    assert.equal(wire.localNodeID, 1);
-    assert.equal(wire.remoteNodeID, 2);
-    assert.equal(wire.localAddress, 3);
-    assert.equal(wire.remoteAddress, 4);
-    assert.equal(wire.localHostname, 'me');
-    assert.equal(wire.remoteHostname, 'you');
+    expect(wire.localNodeID).toBe(1);
+    expect(wire.remoteNodeID).toBe(2);
+    expect(wire.localAddress).toBe(3);
+    expect(wire.remoteAddress).toBe(4);
+    expect(wire.localHostname).toBe('me');
+    expect(wire.remoteHostname).toBe('you');
   });
 
   it('can be removed from the remote table with destroy()', function () {
@@ -126,7 +125,7 @@ describe('NetSimWire', function () {
     wireTable.create({}, function (err, row) {
       testRow = row;
     });
-    assert.isDefined(testRow, 'Failed to create test row');
+    expect(testRow).toBeDefined();
 
     // Call destroy()
     var wire = new NetSimWire(testShard, testRow);

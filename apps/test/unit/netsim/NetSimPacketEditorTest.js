@@ -1,5 +1,4 @@
 /** @file Tests for NetSimPacketEditor */
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
 
 var DataConverters = require('@cdo/apps/netsim/DataConverters');
 var EncodingType = require('@cdo/apps/netsim/NetSimConstants').EncodingType;
@@ -35,19 +34,19 @@ describe('NetSimPacketEditor', function () {
 
     editor.setEncodings([EncodingType.ASCII]);
 
-    assert.equal(1, rootDiv.find('tr.ascii').length);
-    assert.equal(0, rootDiv.find('tr.decimal').length);
-    assert.equal(0, rootDiv.find('tr.hexadecimal').length);
-    assert.equal(0, rootDiv.find('tr.binary').length);
-    assert.equal(0, rootDiv.find('tr.a_and_b').length);
+    expect(1).toBe(rootDiv.find('tr.ascii').length);
+    expect(0).toBe(rootDiv.find('tr.decimal').length);
+    expect(0).toBe(rootDiv.find('tr.hexadecimal').length);
+    expect(0).toBe(rootDiv.find('tr.binary').length);
+    expect(0).toBe(rootDiv.find('tr.a_and_b').length);
 
     editor.setEncodings([]);
 
-    assert.equal(0, rootDiv.find('tr.ascii').length);
-    assert.equal(0, rootDiv.find('tr.decimal').length);
-    assert.equal(0, rootDiv.find('tr.hexadecimal').length);
-    assert.equal(0, rootDiv.find('tr.binary').length);
-    assert.equal(0, rootDiv.find('tr.a_and_b').length);
+    expect(0).toBe(rootDiv.find('tr.ascii').length);
+    expect(0).toBe(rootDiv.find('tr.decimal').length);
+    expect(0).toBe(rootDiv.find('tr.hexadecimal').length);
+    expect(0).toBe(rootDiv.find('tr.binary').length);
+    expect(0).toBe(rootDiv.find('tr.a_and_b').length);
 
     editor.setEncodings([
       EncodingType.ASCII,
@@ -57,27 +56,23 @@ describe('NetSimPacketEditor', function () {
       EncodingType.A_AND_B,
     ]);
 
-    assert.equal(1, rootDiv.find('tr.ascii').length);
-    assert.equal(1, rootDiv.find('tr.decimal').length);
-    assert.equal(1, rootDiv.find('tr.hexadecimal').length);
-    assert.equal(1, rootDiv.find('tr.binary').length);
-    assert.equal(1, rootDiv.find('tr.a_and_b').length);
+    expect(1).toBe(rootDiv.find('tr.ascii').length);
+    expect(1).toBe(rootDiv.find('tr.decimal').length);
+    expect(1).toBe(rootDiv.find('tr.hexadecimal').length);
+    expect(1).toBe(rootDiv.find('tr.binary').length);
+    expect(1).toBe(rootDiv.find('tr.a_and_b').length);
 
-    assert.equal(message, rootDiv.find('tr.ascii textarea.message').val());
-    assert.equal(
-      formatBinary(binaryMessage, 8),
+    expect(message).toBe(rootDiv.find('tr.ascii textarea.message').val());
+    expect(formatBinary(binaryMessage, 8)).toBe(
       rootDiv.find('tr.binary textarea.message').val()
     );
-    assert.equal(
-      alignDecimal(binaryToDecimal(binaryMessage, 8)),
+    expect(alignDecimal(binaryToDecimal(binaryMessage, 8))).toBe(
       rootDiv.find('tr.decimal textarea.message').val()
     );
-    assert.equal(
-      formatHex(binaryToHex(binaryMessage), 8),
+    expect(formatHex(binaryToHex(binaryMessage), 8)).toBe(
       rootDiv.find('tr.hexadecimal textarea.message').val()
     );
-    assert.equal(
-      formatAB(binaryToAB(binaryMessage), 8),
+    expect(formatAB(binaryToAB(binaryMessage), 8)).toBe(
       rootDiv.find('tr.a_and_b textarea.message').val()
     );
   });

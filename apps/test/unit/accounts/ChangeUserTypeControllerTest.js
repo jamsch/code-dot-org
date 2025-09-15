@@ -1,27 +1,24 @@
 import $ from 'jquery';
 import ReactDOM from 'react-dom';
-import {spy, stub} from 'sinon'; // eslint-disable-line no-restricted-imports
 
 import ChangeUserTypeController from '@cdo/apps/accounts/ChangeUserTypeController';
 import * as utils from '@cdo/apps/utils';
 import i18n from '@cdo/locale';
 
-import {expect} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 describe('ChangeUserTypeController', () => {
   let controller, form, button, status, dropdown;
 
   beforeEach(() => {
-    stub(utils, 'reload');
-    spy(ReactDOM, 'render');
-    spy(ReactDOM, 'unmountComponentAtNode');
+    jest.spyOn(utils, 'reload').mockImplementation();
+    jest.spyOn(ReactDOM, 'render');
+    jest.spyOn(ReactDOM, 'unmountComponentAtNode');
   });
 
   afterEach(() => {
     controller && controller.hideChangeUserTypeModal();
-    utils.reload.restore();
-    ReactDOM.render.restore();
-    ReactDOM.unmountComponentAtNode.restore();
+    utils.reload.mockRestore();
+    ReactDOM.render.mockRestore();
+    ReactDOM.unmountComponentAtNode.mockRestore();
   });
 
   describe('handling user_return_to param', () => {
@@ -54,7 +51,7 @@ describe('ChangeUserTypeController', () => {
       form.trigger('ajax:success');
       await submitPromise;
 
-      expect(window.location.href).to.equal(userReturnToUrl);
+      expect(window.location.href).toBe(userReturnToUrl);
     });
 
     it('resolves normally if the user_return_to param is not relative', async () => {
@@ -70,7 +67,7 @@ describe('ChangeUserTypeController', () => {
       form.trigger('ajax:success');
       await submitPromise;
 
-      expect(window.location.href).to.equal('');
+      expect(window.location.href).toBe('');
     });
 
     it('resolves normally if the user_return_to param does not exist', async () => {
@@ -81,7 +78,7 @@ describe('ChangeUserTypeController', () => {
       form.trigger('ajax:success');
       await submitPromise;
 
-      expect(window.location.href).to.equal('');
+      expect(window.location.href).toBe('');
     });
   });
 
@@ -94,53 +91,53 @@ describe('ChangeUserTypeController', () => {
     });
 
     it('button is initially disabled', () => {
-      expect(button.prop('disabled')).to.be.true;
+      expect(button.prop('disabled')).toBe(true);
     });
 
     it('changing dropdown enables/disables button', () => {
       dropdown.val(OTHER_USER_TYPE);
       dropdown.change();
-      expect(button.prop('disabled')).to.be.false;
+      expect(button.prop('disabled')).toBe(false);
 
       dropdown.val(INITIAL_USER_TYPE);
       dropdown.change();
-      expect(button.prop('disabled')).to.be.true;
+      expect(button.prop('disabled')).toBe(true);
     });
 
     it('clicking the enabled button shows a modal dialog', () => {
       dropdown.val(OTHER_USER_TYPE);
       dropdown.change();
 
-      expect(ReactDOM.render).not.to.have.been.called;
+      expect(ReactDOM.render).not.toHaveBeenCalled();
       button.click();
-      expect(ReactDOM.render).to.have.been.calledOnce;
+      expect(ReactDOM.render).toHaveBeenCalledTimes(1);
     });
 
     it('show is idempotent', () => {
-      expect(ReactDOM.render).not.to.have.been.called;
+      expect(ReactDOM.render).not.toHaveBeenCalled();
       controller.showChangeUserTypeModal();
       controller.showChangeUserTypeModal();
-      expect(ReactDOM.render).to.have.been.calledOnce;
+      expect(ReactDOM.render).toHaveBeenCalledTimes(1);
     });
 
     it('can hide the modal dialog', () => {
       dropdown.val(OTHER_USER_TYPE);
       dropdown.change();
       button.click();
-      expect(ReactDOM.render).to.have.been.calledOnce;
+      expect(ReactDOM.render).toHaveBeenCalledTimes(1);
 
-      expect(ReactDOM.unmountComponentAtNode).not.to.have.been.called;
+      expect(ReactDOM.unmountComponentAtNode).not.toHaveBeenCalled();
       controller.hideChangeUserTypeModal();
-      expect(ReactDOM.unmountComponentAtNode).to.have.been.calledOnce;
+      expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledTimes(1);
     });
 
     it('hide is idempotent', () => {
       controller.showChangeUserTypeModal();
 
-      expect(ReactDOM.unmountComponentAtNode).not.to.have.been.called;
+      expect(ReactDOM.unmountComponentAtNode).not.toHaveBeenCalled();
       controller.hideChangeUserTypeModal();
       controller.hideChangeUserTypeModal();
-      expect(ReactDOM.unmountComponentAtNode).to.have.been.calledOnce;
+      expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -153,53 +150,51 @@ describe('ChangeUserTypeController', () => {
     });
 
     it('button is initially disabled', () => {
-      expect(button.prop('disabled')).to.be.true;
+      expect(button.prop('disabled')).toBe(true);
     });
 
     it('changing dropdown enables/disables button', () => {
       dropdown.val(OTHER_USER_TYPE);
       dropdown.change();
-      expect(button.prop('disabled')).to.be.false;
+      expect(button.prop('disabled')).toBe(false);
 
       dropdown.val(INITIAL_USER_TYPE);
       dropdown.change();
-      expect(button.prop('disabled')).to.be.true;
+      expect(button.prop('disabled')).toBe(true);
     });
 
     it('clicking button submits form, reloads page on success', async () => {
       dropdown.val(OTHER_USER_TYPE);
       dropdown.change();
       button.click();
-      expect(form.submit).to.have.been.calledOnce;
+      expect(form.submit).toHaveBeenCalledTimes(1);
 
-      expect(dropdown.prop('disabled')).to.be.true;
-      expect(button.prop('disabled')).to.be.true;
-      expect(status.text()).to.equal(i18n.saving());
+      expect(dropdown.prop('disabled')).toBe(true);
+      expect(button.prop('disabled')).toBe(true);
+      expect(status.text()).toBe(i18n.saving());
 
       form.trigger('ajax:success');
       await controller.submitPromise;
 
-      expect(utils.reload).to.have.been.calledOnce;
+      expect(utils.reload).toHaveBeenCalledTimes(1);
     });
 
     it('re-enables controls on failure and displays error', async () => {
       dropdown.val(OTHER_USER_TYPE);
       dropdown.change();
       button.click();
-      expect(form.submit).to.have.been.calledOnce;
+      expect(form.submit).toHaveBeenCalledTimes(1);
 
-      expect(dropdown.prop('disabled')).to.be.true;
-      expect(button.prop('disabled')).to.be.true;
-      expect(status.text()).to.equal(i18n.saving());
+      expect(dropdown.prop('disabled')).toBe(true);
+      expect(button.prop('disabled')).toBe(true);
+      expect(status.text()).toBe(i18n.saving());
 
       form.trigger('ajax:error', [{}]);
       await controller.submitPromise;
 
-      expect(dropdown.prop('disabled')).to.be.false;
-      expect(button.prop('disabled')).to.be.false;
-      expect(status.text()).to.equal(
-        i18n.changeUserTypeModal_unexpectedError()
-      );
+      expect(dropdown.prop('disabled')).toBe(false);
+      expect(button.prop('disabled')).toBe(false);
+      expect(status.text()).toBe(i18n.changeUserTypeModal_unexpectedError());
     });
   });
 
@@ -216,7 +211,7 @@ describe('ChangeUserTypeController', () => {
         <button id="change-user-type-button"/>
       </form>
     `);
-    stub(form, 'submit');
+    jest.spyOn(form, 'submit').mockImplementation();
 
     dropdown = form.find('#change-user-type_user_user_type');
     dropdown.val(userType);

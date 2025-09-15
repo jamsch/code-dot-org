@@ -1,5 +1,3 @@
-import {assert} from '../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var errorMapper = require('@cdo/apps/acemode/errorMapper');
 
 describe('errorMapper correctly maps different errors', function () {
@@ -18,8 +16,7 @@ describe('errorMapper correctly maps different errors', function () {
 
     errorMapper.processResults(jslintResults);
 
-    assert.equal(
-      jslintResults.data[0].text,
+    expect(jslintResults.data[0].text).toBe(
       "'x' is defined, but it's not called in your program."
     );
   });
@@ -39,8 +36,7 @@ describe('errorMapper correctly maps different errors', function () {
 
     errorMapper.processResults(jslintResults);
 
-    assert.equal(
-      jslintResults.data[0].text,
+    expect(jslintResults.data[0].text).toBe(
       'For conditionals, use the comparison operator (===) to check if two things are equal.'
     );
   });
@@ -60,7 +56,7 @@ describe('errorMapper correctly maps different errors', function () {
 
     errorMapper.processResults(jslintResults);
 
-    assert.equal(jslintResults.data[0].text, "'x' hasn't been declared yet.");
+    expect(jslintResults.data[0].text).toBe("'x' hasn't been declared yet.");
   });
 
   it('reserved words (App lab)', function () {
@@ -77,8 +73,7 @@ describe('errorMapper correctly maps different errors', function () {
     };
 
     errorMapper.processResults(jslintResults, 'Applab');
-    assert.equal(
-      jslintResults.data[0].text,
+    expect(jslintResults.data[0].text).toBe(
       "'x' is a reserved word in App Lab. Use a different variable name."
     );
   });
@@ -97,8 +92,7 @@ describe('errorMapper correctly maps different errors', function () {
     };
 
     errorMapper.processResults(jslintResults, 'Gamelab');
-    assert.equal(
-      jslintResults.data[0].text,
+    expect(jslintResults.data[0].text).toBe(
       "'x' is a reserved word in Game Lab. Use a different variable name."
     );
   });
@@ -117,8 +111,7 @@ describe('errorMapper correctly maps different errors', function () {
     };
 
     errorMapper.processResults(jslintResults, 'Gamelab');
-    assert.equal(
-      jslintResults.data[0].text,
+    expect(jslintResults.data[0].text).toBe(
       "'setup' is a function that already exists in Game Lab. Consider giving this function a different name."
     );
   });

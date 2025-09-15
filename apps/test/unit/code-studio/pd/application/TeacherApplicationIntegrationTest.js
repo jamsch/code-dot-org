@@ -1,8 +1,6 @@
-import {expect} from 'chai'; // eslint-disable-line no-restricted-imports
 import {mount} from 'enzyme'; // eslint-disable-line no-restricted-imports
 import $ from 'jquery';
 import React from 'react';
-import sinon from 'sinon'; // eslint-disable-line no-restricted-imports
 
 import {PageLabels} from '@cdo/apps/generated/pd/teacherApplicationConstants';
 import * as utils from '@cdo/apps/utils';
@@ -28,15 +26,15 @@ describe('TeacherApplication', () => {
   };
 
   beforeEach(() => {
-    sinon.stub($, 'ajax').returns(new $.Deferred());
-    sinon.stub($, 'param').returns(new $.Deferred());
-    sinon.stub(window, 'fetch').returns(Promise.resolve({ok: true}));
-    sinon.stub(utils, 'reload');
-    window.ga = sinon.fake();
+    jest.spyOn($, 'ajax').mockReturnValue(new $.Deferred());
+    jest.spyOn($, 'param').mockReturnValue(new $.Deferred());
+    jest.spyOn(window, 'fetch').mockReturnValue(Promise.resolve({ok: true}));
+    jest.spyOn(utils, 'reload').mockImplementation();
+    window.ga = jest.fn();
   });
 
   afterEach(() => {
-    sinon.restore();
+    jest.restoreAllMocks();
     window.ga = undefined;
   });
 
@@ -44,7 +42,7 @@ describe('TeacherApplication', () => {
     const page = mount(
       <FindYourRegion {...defaultProps} data={{program: 'CSD'}} />
     );
-    expect(page.find('SchoolAutocompleteDropdown').prop('value')).to.equal(
+    expect(page.find('SchoolAutocompleteDropdown').prop('value')).toBe(
       undefined
     );
   });
@@ -53,17 +51,13 @@ describe('TeacherApplication', () => {
     const page = mount(
       <FindYourRegion {...defaultProps} data={{program: 'CSD', school: '50'}} />
     );
-    expect(page.find('SchoolAutocompleteDropdown').prop('value')).to.equal(
-      '50'
-    );
+    expect(page.find('SchoolAutocompleteDropdown').prop('value')).toBe('50');
   });
 
   it('Sets the school dropdown value from storage', () => {
     const data = {program: 'CSD', school: '25'};
 
     const page = mount(<FindYourRegion {...defaultProps} data={data} />);
-    expect(page.find('SchoolAutocompleteDropdown').prop('value')).to.equal(
-      '25'
-    );
+    expect(page.find('SchoolAutocompleteDropdown').prop('value')).toBe('25');
   });
 });

@@ -1,5 +1,3 @@
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimGlobals = require('@cdo/apps/netsim/NetSimGlobals');
 var NetSimLocalClientNode = require('@cdo/apps/netsim/NetSimLocalClientNode');
 var NetSimRouterNode = require('@cdo/apps/netsim/NetSimRouterNode');
@@ -24,7 +22,7 @@ describe('NetSimVizSimulationNode', function () {
     NetSimLocalClientNode.create(shard, displayName, function (e, n) {
       newClient = n;
     });
-    assert.isDefined(newClient, 'Failed to create a remote client.');
+    expect(newClient).toBeDefined();
     return newClient;
   };
 
@@ -37,7 +35,7 @@ describe('NetSimVizSimulationNode', function () {
     NetSimRouterNode.create(shard, function (e, r) {
       newRouter = r;
     });
-    assert.isDefined(newRouter, 'Failed to create a remote router.');
+    expect(newRouter).toBeDefined();
     return newRouter;
   };
 
@@ -53,16 +51,16 @@ describe('NetSimVizSimulationNode', function () {
     });
 
     it('is a VizElement', function () {
-      assert.instanceOf(vizElement, NetSimVizElement);
+      expect(vizElement).toBeInstanceOf(NetSimVizElement);
     });
 
     it('is a VizNode', function () {
-      assert.instanceOf(vizElement, NetSimVizNode);
+      expect(vizElement).toBeInstanceOf(NetSimVizNode);
     });
 
     it('has default properties', function () {
-      assert.isUndefined(vizElement.correspondingNodeID_);
-      assert.isUndefined(vizElement.autoDnsAddress);
+      expect(vizElement.correspondingNodeID_).toBeUndefined();
+      expect(vizElement.autoDnsAddress).toBeUndefined();
     });
   });
 
@@ -73,33 +71,33 @@ describe('NetSimVizSimulationNode', function () {
     });
 
     it("captures the client's node ID", function () {
-      assert.equal(simEntity.entityID, vizElement.getCorrespondingEntityId());
+      expect(simEntity.entityID).toBe(vizElement.getCorrespondingEntityId());
     });
 
     it("shows the client's display name (by default)", function () {
-      assert.equal('Jonathan', vizElement.displayName_.text());
+      expect('Jonathan').toBe(vizElement.displayName_.text());
     });
 
     it("shows the client's hostname when level expects it", function () {
       NetSimGlobals.getLevelConfig().showHostnameInGraph = true;
       vizElement = new NetSimVizSimulationNode(simEntity);
-      assert.equal('jonathan1', vizElement.displayName_.text());
+      expect('jonathan1').toBe(vizElement.displayName_.text());
     });
 
     it("knows it's not a router", function () {
-      assert.isFalse(vizElement.isRouter);
+      expect(vizElement.isRouter).toBe(false);
     });
 
     it('does not cache an auto-dns address', function () {
-      assert.equal(undefined, vizElement.autoDnsAddress);
+      expect(undefined).toBe(vizElement.autoDnsAddress);
     });
 
     it("does not assume it's the local node (must be told explicitly)", function () {
-      assert.isFalse(vizElement.isLocalNode);
+      expect(vizElement.isLocalNode).toBe(false);
     });
 
     it("does not assume it's the DNS node (must be told explicitly)", function () {
-      assert.isFalse(vizElement.isDnsNode);
+      expect(vizElement.isDnsNode).toBe(false);
     });
   });
 
@@ -110,44 +108,44 @@ describe('NetSimVizSimulationNode', function () {
     });
 
     it("captures the router's node ID", function () {
-      assert.equal(simEntity.entityID, vizElement.getCorrespondingEntityId());
+      expect(simEntity.entityID).toBe(vizElement.getCorrespondingEntityId());
     });
 
     it("shows the router's display name (by default)", function () {
-      assert.equal('Router 1', vizElement.displayName_.text());
+      expect('Router 1').toBe(vizElement.displayName_.text());
     });
 
     it("shows the router's hostname when level expects it", function () {
       NetSimGlobals.getLevelConfig().showHostnameInGraph = true;
       vizElement = new NetSimVizSimulationNode(simEntity);
-      assert.equal('router1', vizElement.displayName_.text());
+      expect('router1').toBe(vizElement.displayName_.text());
     });
 
     it("knows it's a router", function () {
-      assert.isTrue(vizElement.isRouter);
+      expect(vizElement.isRouter).toBe(true);
     });
 
     it('caches an auto-dns address', function () {
-      assert.equal('15', vizElement.autoDnsAddress);
+      expect('15').toBe(vizElement.autoDnsAddress);
     });
 
     it('is not the local node or dns node)', function () {
-      assert.isFalse(vizElement.isLocalNode);
-      assert.isFalse(vizElement.isDnsNode);
+      expect(vizElement.isLocalNode).toBe(false);
+      expect(vizElement.isDnsNode).toBe(false);
     });
 
     it("adds the 'router-node' class to its root element", function () {
-      assert.isTrue(vizElement.getRoot().is('.router-node'));
+      expect(vizElement.getRoot().is('.router-node')).toBe(true);
     });
 
     it('is visible by default', function () {
-      assert.equal('', vizElement.getRoot().css('display'));
+      expect('').toBe(vizElement.getRoot().css('display'));
     });
 
     it('is hidden in broadcast mode', function () {
       NetSimGlobals.getLevelConfig().broadcastMode = true;
       vizElement = new NetSimVizSimulationNode(simEntity);
-      assert.equal('none', vizElement.getRoot().css('display'));
+      expect('none').toBe(vizElement.getRoot().css('display'));
     });
   });
 });

@@ -1,5 +1,3 @@
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimGlobals = require('@cdo/apps/netsim/NetSimGlobals');
 var NetSimLocalClientNode = require('@cdo/apps/netsim/NetSimLocalClientNode');
 var NetSimVizElement = require('@cdo/apps/netsim/NetSimVizElement');
@@ -31,7 +29,7 @@ describe('NetSimVizSimulationWire', function () {
     NetSimLocalClientNode.create(shard, displayName, function (e, n) {
       newClient = n;
     });
-    assert.isDefined(newClient, 'Failed to create a remote client.');
+    expect(newClient).toBeDefined();
     return newClient;
   };
 
@@ -53,7 +51,7 @@ describe('NetSimVizSimulationWire', function () {
         newWire = w;
       }
     );
-    assert.isDefined(newWire, 'Failed to create a remote wire.');
+    expect(newWire).toBeDefined();
     return newWire;
   };
 
@@ -85,36 +83,36 @@ describe('NetSimVizSimulationWire', function () {
     });
 
     it('is a VizElement', function () {
-      assert.instanceOf(vizWire, NetSimVizElement);
+      expect(vizWire).toBeInstanceOf(NetSimVizElement);
     });
 
     it('is a VizWire', function () {
-      assert.instanceOf(vizWire, NetSimVizWire);
+      expect(vizWire).toBeInstanceOf(NetSimVizWire);
     });
 
     it('has default properties', function () {
-      assert.strictEqual(0, vizWire.textPosX_);
-      assert.strictEqual(0, vizWire.textPosY_);
-      assert.deepEqual([], vizWire.encodings_);
-      assert.strictEqual(simWire.entityID, vizWire.getCorrespondingEntityId());
-      assert.strictEqual(vizLocalNode, vizWire.localVizNode);
-      assert.strictEqual(vizRemoteNode, vizWire.remoteVizNode);
+      expect(0).toBe(vizWire.textPosX_);
+      expect(0).toBe(vizWire.textPosY_);
+      expect([]).toEqual(vizWire.encodings_);
+      expect(simWire.entityID).toBe(vizWire.getCorrespondingEntityId());
+      expect(vizLocalNode).toBe(vizWire.localVizNode);
+      expect(vizRemoteNode).toBe(vizWire.remoteVizNode);
     });
 
     it('sets addresses on its endpoints', function () {
-      assert.isUndefined(vizLocalNode.address_);
-      assert.isUndefined(vizRemoteNode.address_);
+      expect(vizLocalNode.address_).toBeUndefined();
+      expect(vizRemoteNode.address_).toBeUndefined();
       simWire.localAddress = 'boo';
       simWire.remoteAddress = 'hiss';
       vizWire.configureFrom(simWire);
-      assert.equal('boo', vizLocalNode.address_);
-      assert.equal('hiss', vizRemoteNode.address_);
+      expect('boo').toBe(vizLocalNode.address_);
+      expect('hiss').toBe(vizRemoteNode.address_);
     });
 
     it('is hidden in broadcast mode', function () {
       NetSimGlobals.getLevelConfig().broadcastMode = true;
       vizWire.configureFrom(simWire);
-      assert.equal('none', vizWire.getRoot().css('display'));
+      expect('none').toBe(vizWire.getRoot().css('display'));
     });
   });
 });

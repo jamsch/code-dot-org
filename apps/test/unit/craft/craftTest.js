@@ -9,11 +9,9 @@ import {
 } from '@cdo/apps/redux';
 import pageConstants from '@cdo/apps/redux/pageConstants';
 
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 describe('Craft', () => {
-  beforeAll(() => sinon.stub(Craft, 'render'));
-  afterAll(() => Craft.render.restore());
+  beforeAll(() => jest.spyOn(Craft, 'render').mockImplementation());
+  afterAll(() => Craft.render.mockRestore());
 
   beforeEach(stubRedux);
   afterEach(restoreRedux);
@@ -38,7 +36,7 @@ describe('Craft', () => {
 
     Craft.init(config);
     server.respond();
-    assert(getStore().getState().pageConstants.isMinecraft);
+    expect(getStore().getState().pageConstants.isMinecraft).toBeTruthy();
     server.restore();
   });
 });

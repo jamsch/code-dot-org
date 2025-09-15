@@ -1,8 +1,6 @@
 /** @file Tests for NetSimLogPanel */
 import $ from 'jquery';
 
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var DataConverters = require('@cdo/apps/netsim/DataConverters');
 var EncodingType = require('@cdo/apps/netsim/NetSimConstants').EncodingType;
 var NetSimGlobals = require('@cdo/apps/netsim/NetSimGlobals');
@@ -25,25 +23,25 @@ describe('NetSimLogPanel', function () {
 
   it('has default maximum packet size of 50', function () {
     panel = new NetSimLogPanel(rootDiv, {});
-    assert.equal(50, panel.maximumLogPackets_);
+    expect(50).toBe(panel.maximumLogPackets_);
   });
 
   it('is open by default', function () {
     panel = new NetSimLogPanel(rootDiv, {});
-    assert.isFalse(panel.isMinimized());
+    expect(panel.isMinimized()).toBe(false);
   });
 
   it('can be configured to be closed on creation', function () {
     panel = new NetSimLogPanel(rootDiv, {isMinimized: true});
-    assert.isTrue(panel.isMinimized());
+    expect(panel.isMinimized()).toBe(true);
   });
 
   it('renders body on construction', function () {
     var initialHtml = rootDiv.html();
     panel = new NetSimLogPanel(rootDiv, {isMinimized: true});
     var newHtml = rootDiv.html();
-    assert.notEqual(initialHtml, newHtml);
-    assert(newHtml.length > initialHtml.length);
+    expect(initialHtml).not.toBe(newHtml);
+    expect(newHtml.length > initialHtml.length).toBeTruthy();
   });
 
   describe('logging', function () {
@@ -62,19 +60,19 @@ describe('NetSimLogPanel', function () {
       panel.log(to_b('first-message'), 1);
       panel.setEncodings([EncodingType.ASCII]);
 
-      assert.equal(1, scrollArea.find('.packet:first tr.ascii').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.decimal').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.hexadecimal').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.binary').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.a_and_b').length);
+      expect(1).toBe(scrollArea.find('.packet:first tr.ascii').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.decimal').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.hexadecimal').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.binary').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.a_and_b').length);
 
       panel.setEncodings([]);
 
-      assert.equal(0, scrollArea.find('.packet:first tr.ascii').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.decimal').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.hexadecimal').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.binary').length);
-      assert.equal(0, scrollArea.find('.packet:first tr.a_and_b').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.ascii').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.decimal').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.hexadecimal').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.binary').length);
+      expect(0).toBe(scrollArea.find('.packet:first tr.a_and_b').length);
 
       panel.setEncodings([
         EncodingType.ASCII,
@@ -84,36 +82,34 @@ describe('NetSimLogPanel', function () {
         EncodingType.A_AND_B,
       ]);
 
-      assert.equal(1, scrollArea.find('.packet:first tr.ascii').length);
-      assert.equal(1, scrollArea.find('.packet:first tr.decimal').length);
-      assert.equal(1, scrollArea.find('.packet:first tr.hexadecimal').length);
-      assert.equal(1, scrollArea.find('.packet:first tr.binary').length);
-      assert.equal(1, scrollArea.find('.packet:first tr.a_and_b').length);
+      expect(1).toBe(scrollArea.find('.packet:first tr.ascii').length);
+      expect(1).toBe(scrollArea.find('.packet:first tr.decimal').length);
+      expect(1).toBe(scrollArea.find('.packet:first tr.hexadecimal').length);
+      expect(1).toBe(scrollArea.find('.packet:first tr.binary').length);
+      expect(1).toBe(scrollArea.find('.packet:first tr.a_and_b').length);
     });
 
     it('can log a packet', function () {
-      assert.equal(0, panel.packets_.length);
-      assert.equal(0, scrollArea.children().length);
+      expect(0).toBe(panel.packets_.length);
+      expect(0).toBe(scrollArea.children().length);
       panel.log(to_b('fake-packet-binary'), 1);
-      assert.equal(1, panel.packets_.length);
-      assert.equal(1, scrollArea.children().length);
+      expect(1).toBe(panel.packets_.length);
+      expect(1).toBe(scrollArea.children().length);
     });
 
     it('puts subsequent packets at the top of the log', function () {
       panel.log(to_b('first-message'), 1);
       panel.log(to_b('second-message'), 2);
-      assert.equal(2, scrollArea.children().length);
-      assert.equal(to_b('second-message'), panel.packets_[0].packetBinary_);
-      assert.equal(
-        'second-message',
+      expect(2).toBe(scrollArea.children().length);
+      expect(to_b('second-message')).toBe(panel.packets_[0].packetBinary_);
+      expect('second-message').toBe(
         scrollArea.find('.packet:first tr.ascii td.message').text()
       );
 
       panel.log(to_b('third-message'), 3);
-      assert.equal(3, scrollArea.children().length);
-      assert.equal(to_b('third-message'), panel.packets_[0].packetBinary_);
-      assert.equal(
-        'third-message',
+      expect(3).toBe(scrollArea.children().length);
+      expect(to_b('third-message')).toBe(panel.packets_[0].packetBinary_);
+      expect('third-message').toBe(
         scrollArea.find('.packet:first tr.ascii td.message').text()
       );
     });
@@ -123,37 +119,31 @@ describe('NetSimLogPanel', function () {
       for (var i = 1; i <= 9; i++) {
         panel.log(to_b('packet ' + i), i);
       }
-      assert.equal(9, scrollArea.children().length);
-      assert.equal(
-        'packet 9',
+      expect(9).toBe(scrollArea.children().length);
+      expect('packet 9').toBe(
         scrollArea.find('.packet:first tr.ascii td.message').text()
       );
-      assert.equal(
-        'packet 1',
+      expect('packet 1').toBe(
         scrollArea.find('.packet:last tr.ascii td.message').text()
       );
 
       // Packet 10 does not cause culling
       panel.log(to_b('packet 10'), 10);
-      assert.equal(10, scrollArea.children().length);
-      assert.equal(
-        'packet 10',
+      expect(10).toBe(scrollArea.children().length);
+      expect('packet 10').toBe(
         scrollArea.find('.packet:first tr.ascii td.message').text()
       );
-      assert.equal(
-        'packet 1',
+      expect('packet 1').toBe(
         scrollArea.find('.packet:last tr.ascii td.message').text()
       );
 
       // Packet 11 causes packet 1 to drop off the end
       panel.log(to_b('packet 11'), 11);
-      assert.equal(10, scrollArea.children().length);
-      assert.equal(
-        'packet 11',
+      expect(10).toBe(scrollArea.children().length);
+      expect('packet 11').toBe(
         scrollArea.find('.packet:first tr.ascii td.message').text()
       );
-      assert.equal(
-        'packet 2',
+      expect('packet 2').toBe(
         scrollArea.find('.packet:last tr.ascii td.message').text()
       );
     });
@@ -162,9 +152,8 @@ describe('NetSimLogPanel', function () {
       panel.log(to_b('first-message'), 1);
       panel.log(to_b('first-message again'), 1);
 
-      assert.equal(1, scrollArea.children().length);
-      assert.equal(
-        'first-message',
+      expect(1).toBe(scrollArea.children().length);
+      expect('first-message').toBe(
         scrollArea.find('.packet:first tr.ascii td.message').text()
       );
     });

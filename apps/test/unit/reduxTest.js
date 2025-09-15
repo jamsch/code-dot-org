@@ -1,5 +1,3 @@
-import {expect} from 'chai'; // eslint-disable-line no-restricted-imports
-
 import {
   stubRedux,
   restoreRedux,
@@ -34,17 +32,17 @@ describe('global redux store', () => {
     });
 
     it('attaches reducers to the global store', () => {
-      expect(hasReducer('incrementor')).to.be.true;
+      expect(hasReducer('incrementor')).toBe(true);
 
       getStore().dispatch({type: 'INCREMENT'});
-      expect(getStore().getState()).to.deep.equal({incrementor: 1});
+      expect(getStore().getState()).toEqual({incrementor: 1});
 
       getStore().dispatch({type: 'DECREMENT'});
-      expect(getStore().getState()).to.deep.equal({incrementor: 0});
+      expect(getStore().getState()).toEqual({incrementor: 0});
     });
 
     it('throws an exception if a reducer is already registered', () => {
-      expect(() => registerReducers({incrementor: state => 1})).to.throw(
+      expect(() => registerReducers({incrementor: state => 1})).toThrow(
         Error,
         'reducer with key "incrementor" already registered!'
       );
@@ -58,12 +56,12 @@ describe('global redux store', () => {
       getStore().dispatch({type: 'INCREMENT'});
       getStore().dispatch({type: 'INCREMENT'});
       getStore().dispatch({type: 'INCREMENT'});
-      expect(getStore().getState()).to.deep.equal({incrementor: 3});
+      expect(getStore().getState()).toEqual({incrementor: 3});
 
       registerReducers({otherIncrementor: incrementor});
       getStore().dispatch({type: 'INCREMENT'});
       getStore().dispatch({type: 'INCREMENT'});
-      expect(getStore().getState()).to.deep.equal({
+      expect(getStore().getState()).toEqual({
         incrementor: 5,
         otherIncrementor: 2,
       });
@@ -71,8 +69,8 @@ describe('global redux store', () => {
 
     it('allows you to register multiple reducers at once', () => {
       registerReducers({a: incrementor, b: () => 'hello'});
-      expect(hasReducer('a')).to.be.true;
-      expect(hasReducer('b')).to.be.true;
+      expect(hasReducer('a')).toBe(true);
+      expect(hasReducer('b')).toBe(true);
     });
   });
 });

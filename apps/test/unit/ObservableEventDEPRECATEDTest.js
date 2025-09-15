@@ -1,5 +1,3 @@
-import {assert} from '../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 describe('ObservableEventDEPRECATED', function () {
   var ObservableEventDEPRECATED = require('@cdo/apps/ObservableEventDEPRECATED');
   var eventA, eventB, log, funcX, funcY;
@@ -26,7 +24,7 @@ describe('ObservableEventDEPRECATED', function () {
 
       eventA.notifyObservers();
 
-      assert(log === 'XXYXY');
+      expect(log).toBe('XXYXY');
     });
 
     it('does not share functions between events', function () {
@@ -35,7 +33,7 @@ describe('ObservableEventDEPRECATED', function () {
 
       eventA.notifyObservers();
 
-      assert(log === 'X');
+      expect(log).toBe('X');
     });
 
     it('can be fired multiple times', function () {
@@ -45,11 +43,11 @@ describe('ObservableEventDEPRECATED', function () {
 
       eventA.notifyObservers();
 
-      assert(log === 'XXY');
+      expect(log).toBe('XXY');
 
       eventA.notifyObservers();
 
-      assert(log === 'XXYXXY');
+      expect(log).toBe('XXYXXY');
     });
   });
 
@@ -63,7 +61,7 @@ describe('ObservableEventDEPRECATED', function () {
     });
 
     it('returns a frozen key', function () {
-      assert(Object.isFrozen(key2));
+      expect(Object.isFrozen(key2)).toBeTruthy();
 
       // Modifying a frozen key will either fail silently,
       // or will throw an exception.
@@ -73,22 +71,19 @@ describe('ObservableEventDEPRECATED', function () {
       } catch (e) {
         threwError = true;
       }
-      assert(
-        threwError || key2.newAttribute === undefined,
-        'Returned keys must be frozen.'
-      );
+      expect(threwError || key2.newAttribute === undefined).toBeTruthy();
     });
 
     it('can be unregistered with given key', function () {
       eventA.unregister(key1);
       eventA.notifyObservers();
-      assert(log === 'YX');
+      expect(log).toBe('YX');
     });
 
     it('creates unique keys for different entries of the same function', function () {
       eventA.unregister(key3);
       eventA.notifyObservers();
-      assert(log === 'XY');
+      expect(log).toBe('XY');
     });
   });
 
@@ -104,10 +99,10 @@ describe('ObservableEventDEPRECATED', function () {
     eventA.register(funcUsesThis.bind(observerB));
     eventA.notifyObservers();
 
-    assert(observerA.log === 'Z');
-    assert(observerA.that === observerA);
-    assert(observerB.log === 'Z');
-    assert(observerB.that === observerB);
+    expect(observerA.log).toBe('Z');
+    expect(observerA.that).toBe(observerA);
+    expect(observerB.log).toBe('Z');
+    expect(observerB.that).toBe(observerB);
   });
 
   it('passes arguments through to observers', function () {
@@ -120,6 +115,6 @@ describe('ObservableEventDEPRECATED', function () {
 
     eventA.notifyObservers('W');
 
-    assert(log === 'XW');
+    expect(log).toBe('XW');
   });
 });

@@ -1,4 +1,3 @@
-import {assert} from 'chai'; // eslint-disable-line no-restricted-imports
 import {shallow} from 'enzyme'; // eslint-disable-line no-restricted-imports
 import React from 'react';
 
@@ -17,7 +16,7 @@ describe('AgeDialog', () => {
 
   it('renders null if user is signed in', () => {
     const wrapper = shallow(<AgeDialog {...defaultProps} signedIn={true} />);
-    assert.equal(wrapper.children().length, 0);
+    expect(wrapper.children().length).toBe(0);
   });
 
   it('renders null if dialog was seen before', () => {
@@ -31,12 +30,12 @@ describe('AgeDialog', () => {
       }
     });
     const wrapper = shallow(<AgeDialog {...defaultProps} />);
-    assert.equal(wrapper.children().length, 0);
+    expect(wrapper.children().length).toBe(0);
     getItem.mockRestore();
   });
 
   it('renders a dialog if neither signed in nor seen before', () => {
     const wrapper = shallow(<AgeDialog {...defaultProps} />);
-    assert.equal(wrapper.name(), 'BaseDialog');
+    expect(wrapper.name()).toBe('BaseDialog');
   });
 });

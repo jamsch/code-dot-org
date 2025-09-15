@@ -1,5 +1,3 @@
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimGlobals = require('@cdo/apps/netsim/NetSimGlobals');
 var NetSimVizAutoDnsNode = require('@cdo/apps/netsim/NetSimVizAutoDnsNode');
 var NetSimVizElement = require('@cdo/apps/netsim/NetSimVizElement');
@@ -20,37 +18,37 @@ describe('NetSimVizAutoDnsNode', function () {
     });
 
     it('is a VizElement', function () {
-      assert.instanceOf(vizElement, NetSimVizElement);
+      expect(vizElement).toBeInstanceOf(NetSimVizElement);
     });
 
     it('is a VizNode', function () {
-      assert.instanceOf(vizElement, NetSimVizNode);
+      expect(vizElement).toBeInstanceOf(NetSimVizNode);
     });
 
     it('uses a DNS display name (by default)', function () {
-      assert.equal('DNS', vizElement.displayName_.text());
+      expect('DNS').toBe(vizElement.displayName_.text());
     });
 
     it('uses a dns hostname when level expects it', function () {
       NetSimGlobals.getLevelConfig().showHostnameInGraph = true;
       vizElement = new NetSimVizAutoDnsNode();
-      assert.equal('dns', vizElement.displayName_.text());
+      expect('dns').toBe(vizElement.displayName_.text());
     });
 
     it("knows it's not a router", function () {
-      assert.isFalse(vizElement.isRouter);
+      expect(vizElement.isRouter).toBe(false);
     });
 
     it("knows it's not a local node", function () {
-      assert.isFalse(vizElement.isLocalNode);
+      expect(vizElement.isLocalNode).toBe(false);
     });
 
     it('knows it is a DNS node', function () {
-      assert.isTrue(vizElement.isDnsNode);
+      expect(vizElement.isDnsNode).toBe(true);
     });
 
     it("adds the 'auto-dns-node' class to its root element", function () {
-      assert.isTrue(vizElement.getRoot().is('.auto-dns-node'));
+      expect(vizElement.getRoot().is('.auto-dns-node')).toBe(true);
     });
   });
 });

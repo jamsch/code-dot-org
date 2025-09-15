@@ -5,8 +5,6 @@ import {Checkbox} from 'react-bootstrap'; // eslint-disable-line no-restricted-i
 import FontAwesome from '@cdo/apps/legacySharedComponents/FontAwesome';
 import {UnconnectedManageStudentsSharingCell as ManageStudentsSharingCell} from '@cdo/apps/templates/manageStudents/ManageStudentsSharingCell';
 
-import {expect} from '../../../util/deprecatedChai'; // eslint-disable-line no-restricted-imports
-
 describe('ManageStudentsSharingCell', () => {
   it('renders a checked Checkbox if editing and can share', () => {
     const wrapper = shallow(
@@ -17,9 +15,9 @@ describe('ManageStudentsSharingCell', () => {
         editedValue={true}
       />
     );
-    expect(wrapper).to.containMatchingElement(
-      <input type="checkbox" checked={true} />
-    );
+    expect(
+      wrapper.containsMatchingElement(<input type="checkbox" checked={true} />)
+    ).toBe(true);
   });
 
   it('renders an unchecked Checkbox if editing and can not share', () => {
@@ -31,9 +29,9 @@ describe('ManageStudentsSharingCell', () => {
         editedValue={false}
       />
     );
-    expect(wrapper).to.containMatchingElement(
-      <input type="checkbox" checked={false} />
-    );
+    expect(
+      wrapper.containsMatchingElement(<input type="checkbox" checked={false} />)
+    ).toBe(true);
   });
 
   it('renders nothing if not editing and can not share', () => {
@@ -45,10 +43,10 @@ describe('ManageStudentsSharingCell', () => {
         editedValue={true}
       />
     );
-    expect(wrapper.containsMatchingElement(<Checkbox />)).to.equal(false);
-    expect(
-      wrapper.containsMatchingElement(<FontAwesome icon="check" />)
-    ).to.equal(false);
+    expect(wrapper.containsMatchingElement(<Checkbox />)).toBe(false);
+    expect(wrapper.containsMatchingElement(<FontAwesome icon="check" />)).toBe(
+      false
+    );
   });
 
   it('renders a FontAwesome checkmark if not editing and can share', () => {
@@ -60,6 +58,8 @@ describe('ManageStudentsSharingCell', () => {
         editedValue={true}
       />
     );
-    expect(wrapper).to.containMatchingElement(<FontAwesome icon="check" />);
+    expect(wrapper.containsMatchingElement(<FontAwesome icon="check" />)).toBe(
+      true
+    );
   });
 });

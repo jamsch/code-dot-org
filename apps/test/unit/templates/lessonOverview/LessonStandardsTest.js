@@ -5,8 +5,6 @@ import LessonStandards, {
   ExpandMode,
 } from '@cdo/apps/templates/lessonOverview/LessonStandards';
 
-import {expect} from '../../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 import {cspStandards, cstaStandards} from './sampleStandardsData';
 
 describe('LessonStandards', () => {
@@ -14,24 +12,24 @@ describe('LessonStandards', () => {
     const standard = cspStandards[0];
     const wrapper = mount(<LessonStandards standards={[standard]} />);
     const text = wrapper.text();
-    expect(text).to.contain(standard.frameworkName);
-    expect(text).to.contain(standard.parentCategoryShortcode);
-    expect(text).to.contain(standard.parentCategoryDescription);
-    expect(text).to.contain(standard.categoryShortcode);
-    expect(text).to.contain(standard.categoryDescription);
-    expect(text).to.contain(standard.shortcode);
-    expect(text).to.contain(standard.description);
+    expect(text).toContain(standard.frameworkName);
+    expect(text).toContain(standard.parentCategoryShortcode);
+    expect(text).toContain(standard.parentCategoryDescription);
+    expect(text).toContain(standard.categoryShortcode);
+    expect(text).toContain(standard.categoryDescription);
+    expect(text).toContain(standard.shortcode);
+    expect(text).toContain(standard.description);
   });
 
   it('renders standard without parent category', () => {
     const standard = cstaStandards[0];
     const wrapper = mount(<LessonStandards standards={[standard]} />);
     const text = wrapper.text();
-    expect(text).to.contain(standard.frameworkName);
-    expect(text).to.contain(standard.categoryShortcode);
-    expect(text).to.contain(standard.categoryDescription);
-    expect(text).to.contain(standard.shortcode);
-    expect(text).to.contain(standard.description);
+    expect(text).toContain(standard.frameworkName);
+    expect(text).toContain(standard.categoryShortcode);
+    expect(text).toContain(standard.categoryDescription);
+    expect(text).toContain(standard.shortcode);
+    expect(text).toContain(standard.description);
   });
 
   it('renders many standards from different frameworks', () => {
@@ -39,22 +37,22 @@ describe('LessonStandards', () => {
     const wrapper = mount(<LessonStandards standards={standards} />);
     const text = wrapper.text();
     standards.forEach(standard => {
-      expect(text).to.contain(standard.shortcode);
-      expect(text).to.contain(standard.description);
+      expect(text).toContain(standard.shortcode);
+      expect(text).toContain(standard.description);
     });
 
     const frameworks = wrapper.find('Framework');
-    expect(frameworks.length).to.equal(2);
+    expect(frameworks.length).toBe(2);
 
     const parentCategories = wrapper.find('UnconnectedParentCategory');
-    expect(parentCategories.length > 0).to.be.true;
+    expect(parentCategories.length > 0).toBe(true);
     parentCategories.forEach(parentCategory => {
-      expect(isOpen(parentCategory)).to.be.false;
+      expect(isOpen(parentCategory)).toBe(false);
     });
     const categories = wrapper.find('UnconnectedCategory');
-    expect(categories.length > 0).to.be.true;
+    expect(categories.length > 0).toBe(true);
     categories.forEach(category => {
-      expect(isOpen(category)).to.be.false;
+      expect(isOpen(category)).toBe(false);
     });
   });
 
@@ -64,18 +62,18 @@ describe('LessonStandards', () => {
       <LessonStandards standards={standards} expandMode={ExpandMode.ALL} />
     );
     const frameworks = wrapper.find('Framework');
-    expect(frameworks.length).to.equal(2);
+    expect(frameworks.length).toBe(2);
 
     const parentCategories = wrapper.find('UnconnectedParentCategory');
-    expect(parentCategories.length > 0).to.be.true;
+    expect(parentCategories.length > 0).toBe(true);
     parentCategories.forEach(parentCategory => {
-      expect(isOpen(parentCategory)).to.be.true;
+      expect(isOpen(parentCategory)).toBe(true);
     });
 
     const categories = wrapper.find('UnconnectedCategory');
-    expect(categories.length > 0).to.be.true;
+    expect(categories.length > 0).toBe(true);
     categories.forEach(category => {
-      expect(isOpen(category)).to.be.true;
+      expect(isOpen(category)).toBe(true);
     });
   });
 });

@@ -1,5 +1,3 @@
-import {assert} from '../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var tickWrapper = require('./../integration/util/tickWrapper');
 
 function createFakeApp() {
@@ -25,16 +23,16 @@ describe('tickWrapper', function () {
     });
 
     app1.onTick();
-    assert.equal(calledMe, false);
-    assert.equal(app1.tickCount, 1);
+    expect(calledMe).toBe(false);
+    expect(app1.tickCount).toBe(1);
 
     app1.onTick();
-    assert.equal(calledMe, false);
-    assert.equal(app1.tickCount, 2);
+    expect(calledMe).toBe(false);
+    expect(app1.tickCount).toBe(2);
 
     app1.onTick();
-    assert.equal(calledMe, true);
-    assert.equal(app1.tickCount, 3);
+    expect(calledMe).toBe(true);
+    expect(app1.tickCount).toBe(3);
   });
 
   it('tickAppUntil', function (done) {
@@ -48,7 +46,7 @@ describe('tickWrapper', function () {
         // tickCount is 4 because our predicate function runs at the beginning of
         // the loop, and our original onTick is still called before we get to
         // promise resolution
-        assert.equal(app1.tickCount, 4);
+        expect(app1.tickCount).toBe(4);
         done();
       });
 
@@ -69,17 +67,13 @@ describe('tickWrapper', function () {
 
     app1.onTick();
     app1.onTick();
-    assert.equal(calledMe, false);
-    assert.equal(app1.tickCount, 2);
+    expect(calledMe).toBe(false);
+    expect(app1.tickCount).toBe(2);
     tickWrapper.reset();
     app1.onTick();
     app1.onTick();
-    assert.equal(app1.tickCount, 4);
-    assert.equal(
-      calledMe,
-      false,
-      'Didnt call function even though we hit tick count, because of reset'
-    );
+    expect(app1.tickCount).toBe(4);
+    expect(calledMe).toBe(false);
   });
 
   it('can have multiple preTick functions, and reset successfully', function () {
@@ -100,14 +94,14 @@ describe('tickWrapper', function () {
 
     app1.onTick();
     app1.onTick();
-    assert.equal(predicate1Calls, 2);
-    assert.equal(predicate2Calls, 2);
-    assert.equal(app1.tickCount, 2);
+    expect(predicate1Calls).toBe(2);
+    expect(predicate2Calls).toBe(2);
+    expect(app1.tickCount).toBe(2);
     tickWrapper.reset();
     app1.onTick();
-    assert.equal(app1.tickCount, 3);
-    assert.equal(predicate1Calls, 2, 'stopped calling predicate1');
-    assert.equal(predicate2Calls, 2, 'stopped calling predicate2');
-    assert.equal(app1.onTick, originalOnTick);
+    expect(app1.tickCount).toBe(3);
+    expect(predicate1Calls).toBe(2);
+    expect(predicate2Calls).toBe(2);
+    expect(app1.onTick).toBe(originalOnTick);
   });
 });

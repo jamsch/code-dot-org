@@ -1,8 +1,6 @@
 /** @file Tests for NetSimRouterLogModal */
 import $ from 'jquery';
 
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimGlobals = require('@cdo/apps/netsim/NetSimGlobals');
 var NetSimLocalClientNode = require('@cdo/apps/netsim/NetSimLocalClientNode');
 var NetSimRouterLogModal = require('@cdo/apps/netsim/NetSimRouterLogModal');
@@ -30,43 +28,43 @@ describe('NetSimRouterLogModal', function () {
     });
 
     it('defaults to showing all router logs when not connected to a router', function () {
-      assert.isTrue(modal.isAllRouterLogMode_);
+      expect(modal.isAllRouterLogMode_).toBe(true);
     });
 
     it('defaults to showing one router log when connected to an isolated router', function () {
       levelConfig.connectedRouters = false;
       modal.setRouter(router);
-      assert.isFalse(modal.isAllRouterLogMode_);
+      expect(modal.isAllRouterLogMode_).toBe(false);
     });
 
     it('defaults to showing one router log when connected to a connected router', function () {
       levelConfig.connectedRouters = true;
       modal.setRouter(router);
-      assert.isFalse(modal.isAllRouterLogMode_);
+      expect(modal.isAllRouterLogMode_).toBe(false);
     });
 
     it('detects a local router', function () {
-      assert.isFalse(modal.hasLocalRouter_());
+      expect(modal.hasLocalRouter_()).toBe(false);
       modal.setRouter(router);
-      assert.isTrue(modal.hasLocalRouter_());
+      expect(modal.hasLocalRouter_()).toBe(true);
     });
 
     it('detects if it can log all routers', function () {
-      assert.isTrue(modal.canLogAllRouters_());
+      expect(modal.canLogAllRouters_()).toBe(true);
       modal.setRouter(router);
       levelConfig.connectedRouters = true;
-      assert.isTrue(modal.canLogAllRouters_());
+      expect(modal.canLogAllRouters_()).toBe(true);
       levelConfig.connectedRouters = false;
-      assert.isFalse(modal.canLogAllRouters_());
+      expect(modal.canLogAllRouters_()).toBe(false);
     });
 
     it('detects if it can switch between modes', function () {
-      assert.isFalse(modal.canSetRouterLogMode_());
+      expect(modal.canSetRouterLogMode_()).toBe(false);
       modal.setRouter(router);
       levelConfig.connectedRouters = true;
-      assert.isTrue(modal.canSetRouterLogMode_());
+      expect(modal.canSetRouterLogMode_()).toBe(true);
       levelConfig.connectedRouters = false;
-      assert.isFalse(modal.canSetRouterLogMode_());
+      expect(modal.canSetRouterLogMode_()).toBe(false);
     });
   });
 
@@ -81,7 +79,7 @@ describe('NetSimRouterLogModal', function () {
       NetSimRouterNode.create(testShard, function (e, r) {
         router = r;
       });
-      assert.isDefined(router, 'Failed to create a remote router.');
+      expect(router).toBeDefined();
 
       NetSimLocalClientNode.create(
         testShard,
@@ -90,27 +88,27 @@ describe('NetSimRouterLogModal', function () {
           localNode = node;
         }
       );
-      assert.isDefined(localNode, 'Made a local node');
+      expect(localNode).toBeDefined();
     });
 
     it('defaults to showing all traffic in every case', function () {
-      assert.equal('none', modal.currentTrafficFilter_);
+      expect('none').toBe(modal.currentTrafficFilter_);
 
       modal.onShardChange(testShard, localNode);
-      assert.equal('none', modal.currentTrafficFilter_);
+      expect('none').toBe(modal.currentTrafficFilter_);
 
       localNode.connectToRouter(router);
-      assert.equal('none', modal.currentTrafficFilter_);
+      expect('none').toBe(modal.currentTrafficFilter_);
     });
 
     it('can set traffic filter modes', function () {
       modal.onShardChange(testShard, localNode);
       localNode.connectToRouter(router);
       var address = localNode.getAddress();
-      assert.equal('none', modal.currentTrafficFilter_);
+      expect('none').toBe(modal.currentTrafficFilter_);
 
       modal.setTrafficFilterMode_('with ' + address);
-      assert.equal('with ' + address, modal.currentTrafficFilter_);
+      expect('with ' + address).toBe(modal.currentTrafficFilter_);
     });
 
     it("disconnecting from a router coerces filter mode back to 'none'", function () {
@@ -118,11 +116,11 @@ describe('NetSimRouterLogModal', function () {
       localNode.connectToRouter(router);
       var address = localNode.getAddress();
       modal.setTrafficFilterMode_('with ' + address);
-      assert.equal('with ' + address, modal.currentTrafficFilter_);
+      expect('with ' + address).toBe(modal.currentTrafficFilter_);
 
       localNode.disconnectRemote();
       modal.setRouter(null); // Normally netsim.js does this
-      assert.equal('none', modal.currentTrafficFilter_);
+      expect('none').toBe(modal.currentTrafficFilter_);
     });
 
     it('can render the dropdown with no local address', function () {

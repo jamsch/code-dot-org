@@ -1,4 +1,3 @@
-import {assert} from 'chai'; // eslint-disable-line no-restricted-imports
 import {shallow} from 'enzyme'; // eslint-disable-line no-restricted-imports
 import React from 'react';
 import {Button} from 'react-bootstrap'; // eslint-disable-line no-restricted-imports
@@ -54,14 +53,11 @@ describe('FoormEntityLoadButtons', () => {
       'c_library, version 0',
     ];
 
-    assert.equal(
-      wrapper.find('.load-buttons-search').prop('options').length,
-      3
-    );
+    expect(wrapper.find('.load-buttons-search').prop('options').length).toBe(3);
     wrapper
       .find('.load-buttons-search')
       .prop('options')
-      .every((menuItem, i) => assert.equal(menuItem.label, expectedOrder[i]));
+      .every((menuItem, i) => expect(menuItem.label).toBe(expectedOrder[i]));
   });
 
   it("sorts, but doesn't filter menu items when toggled off", () => {
@@ -82,14 +78,11 @@ describe('FoormEntityLoadButtons', () => {
       'c_library, version 0',
     ];
 
-    assert.equal(
-      wrapper.find('.load-buttons-search').prop('options').length,
-      4
-    );
+    expect(wrapper.find('.load-buttons-search').prop('options').length).toBe(4);
     wrapper
       .find('.load-buttons-search')
       .prop('options')
-      .every((menuItem, i) => assert.equal(menuItem.label, expectedOrder[i]));
+      .every((menuItem, i) => expect(menuItem.label).toBe(expectedOrder[i]));
   });
 
   it("sorts, but doesn't filter menu items with no toggle", () => {
@@ -107,14 +100,11 @@ describe('FoormEntityLoadButtons', () => {
       'c_library, version 0',
     ];
 
-    assert.equal(
-      wrapper.find('.load-buttons-search').prop('options').length,
-      4
-    );
+    expect(wrapper.find('.load-buttons-search').prop('options').length).toBe(4);
     wrapper
       .find('.load-buttons-search')
       .prop('options')
-      .every((menuItem, i) => assert.equal(menuItem.label, expectedOrder[i]));
+      .every((menuItem, i) => expect(menuItem.label).toBe(expectedOrder[i]));
   });
 
   it('shows blank editor on new library click', () => {

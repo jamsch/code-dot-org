@@ -3,8 +3,6 @@ import $ from 'jquery';
 
 import {KeyCodes} from '@cdo/apps/constants';
 
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimConstants = require('@cdo/apps/netsim/NetSimConstants');
 var NetSimGlobals = require('@cdo/apps/netsim/NetSimGlobals');
 var NetSimLocalClientNode = require('@cdo/apps/netsim/NetSimLocalClientNode');
@@ -40,7 +38,7 @@ describe('NetSimSendPanel', function () {
     NetSimLocalClientNode.create(testShard, 'Remote Ralph', function (_, node) {
       remoteNode = node;
     });
-    assert(localNode && remoteNode, 'Created test nodes');
+    expect(localNode && remoteNode).toBeTruthy();
 
     localNode.connectToClient(remoteNode, function () {});
     remoteNode.connectToClient(localNode, function () {});
@@ -72,13 +70,13 @@ describe('NetSimSendPanel', function () {
     it("sends a single bit on 'Set Wire' button click", function () {
       panel.packets_[0].setPacketBinary('1000');
       panel.getBody().find('#set-wire-button').click();
-      assert.equal('000', panel.packets_[0].getPacketBinary());
+      expect('000').toBe(panel.packets_[0].getPacketBinary());
     });
 
     it('sends a single bit on pressing enter', function () {
       panel.packets_[0].setPacketBinary('1000');
       simulateEnterKeyPress(rootDiv.find('textarea.message'));
-      assert.equal('000', panel.packets_[0].getPacketBinary());
+      expect('000').toBe(panel.packets_[0].getPacketBinary());
     });
   });
 
@@ -97,14 +95,14 @@ describe('NetSimSendPanel', function () {
       panel.packets_[0].setPacketBinary('1000');
       panel.getBody().find('#send-button').click();
       panel.tick({time: 0});
-      assert.equal('', panel.packets_[0].getPacketBinary());
+      expect('').toBe(panel.packets_[0].getPacketBinary());
     });
 
     it('sends all packets on pressing enter', function () {
       panel.packets_[0].setPacketBinary('1000');
       simulateEnterKeyPress(rootDiv.find('textarea.message'));
       panel.tick({time: 0});
-      assert.equal('', panel.packets_[0].getPacketBinary());
+      expect('').toBe(panel.packets_[0].getPacketBinary());
     });
   });
 });

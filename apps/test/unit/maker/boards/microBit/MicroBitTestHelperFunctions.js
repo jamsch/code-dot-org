@@ -1,18 +1,16 @@
-import sinon from 'sinon'; // eslint-disable-line no-restricted-imports
-
 import {MICROBIT_FIRMWARE_VERSION} from '@cdo/apps/maker/boards/microBit/MicroBitConstants';
 
 export function boardSetupAndStub(board) {
   stubOpenSerialPort(board);
-  sinon.stub(board.boardClient_, 'connectBoard').callsFake(() => {
+  jest.spyOn(board.boardClient_, 'connectBoard').mockImplementation(() => {
     board.boardClient_.myPort = {write: () => {}};
     board.boardClient_.firmwareVersion = `Long String Includes ${MICROBIT_FIRMWARE_VERSION}`;
-    sinon.stub(board.boardClient_.myPort, 'write');
+    jest.spyOn(board.boardClient_.myPort, 'write').mockImplementation();
   });
 }
 
 export function stubOpenSerialPort(board) {
-  sinon.stub(board, 'openWebSerial').callsFake(() => {
+  jest.spyOn(board, 'openWebSerial').mockImplementation(() => {
     return Promise.resolve();
   });
 }

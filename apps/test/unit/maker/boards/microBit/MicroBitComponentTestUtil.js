@@ -7,8 +7,6 @@ import {
   MB_COMPONENTS,
 } from '@cdo/apps/maker/boards/microBit/MicroBitConstants';
 
-import {expect} from '../../../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 import {boardSetupAndStub} from './MicroBitTestHelperFunctions';
 export function itMakesMicroBitComponentsAvailable(
   Board,
@@ -54,24 +52,22 @@ export function itMakesMicroBitComponentsAvailable(
       });
 
       it(`correct number of them`, () => {
-        expect(jsInterpreter.addCustomMarshalObject.mock.calls).to.have.length(
+        expect(jsInterpreter.addCustomMarshalObject.mock.calls).toHaveLength(
           MB_COMPONENTS.length
         );
       });
 
       MB_COMPONENTS.forEach(constructor => {
         it(constructor, () => {
-          expect(jsInterpreter.globalProperties).to.have.ownProperty(
-            constructor
-          );
-          expect(jsInterpreter.globalProperties[constructor]).to.be.a(
+          expect(jsInterpreter.globalProperties).toHaveProperty(constructor);
+          expect(typeof jsInterpreter.globalProperties[constructor]).toBe(
             'function'
           );
           const passedObjects =
             jsInterpreter.addCustomMarshalObject.mock.calls.map(
               call => call[0].instance
             );
-          expect(passedObjects).to.include(
+          expect(passedObjects).toContain(
             jsInterpreter.globalProperties[constructor]
           );
         });
@@ -85,7 +81,7 @@ export function itMakesMicroBitComponentsAvailable(
 
       it(`correct number of them`, () => {
         let globalPropsCount = MB_COMPONENTS.length + MB_COMPONENT_COUNT;
-        expect(Object.keys(jsInterpreter.globalProperties)).to.have.length(
+        expect(Object.keys(jsInterpreter.globalProperties)).toHaveLength(
           globalPropsCount
         );
       });
@@ -99,17 +95,17 @@ export function itMakesMicroBitComponentsAvailable(
           });
 
           it('isPressed', () => {
-            expect(component.isPressed).to.be.a('boolean');
+            expect(typeof component.isPressed).toBe('boolean');
           });
           it('holdtime', () => {
-            expect(component.holdtime).to.be.a('number');
+            expect(typeof component.holdtime).toBe('number');
           });
         });
       });
 
       describe('ledScreen', () => {
         function expectLedToHaveFunction(fnName) {
-          expect(jsInterpreter.globalProperties.ledScreen[fnName]).to.be.a(
+          expect(typeof jsInterpreter.globalProperties.ledScreen[fnName]).toBe(
             'function'
           );
         }
@@ -135,11 +131,11 @@ export function itMakesMicroBitComponentsAvailable(
         });
 
         it('F', () => {
-          expect(component).to.have.property('F');
+          expect(component).toHaveProperty('F');
         });
 
         it('C', () => {
-          expect(component).to.have.property('C');
+          expect(component).toHaveProperty('C');
         });
       });
 
@@ -151,19 +147,19 @@ export function itMakesMicroBitComponentsAvailable(
         });
 
         it('value', () => {
-          expect(component).to.have.property('value');
+          expect(component).toHaveProperty('value');
         });
 
         it('threshold', () => {
-          expect(component).to.have.property('threshold');
+          expect(component).toHaveProperty('threshold');
         });
 
         it('start()', () => {
-          expect(component.start).to.be.a('function');
+          expect(typeof component.start).toBe('function');
         });
 
         it('setScale()', () => {
-          expect(component.setScale).to.be.a('function');
+          expect(typeof component.setScale).toBe('function');
         });
       });
 
@@ -175,13 +171,13 @@ export function itMakesMicroBitComponentsAvailable(
         });
 
         it('start()', () => {
-          expect(component.start).to.be.a('function');
+          expect(typeof component.start).toBe('function');
         });
         it('getOrientation()', () => {
-          expect(component.getOrientation).to.be.a('function');
+          expect(typeof component.getOrientation).toBe('function');
         });
         it('getAcceleration()', () => {
-          expect(component.getAcceleration).to.be.a('function');
+          expect(typeof component.getAcceleration).toBe('function');
         });
       });
 
@@ -193,16 +189,16 @@ export function itMakesMicroBitComponentsAvailable(
         });
 
         it('start()', () => {
-          expect(component.start).to.be.a('function');
+          expect(typeof component.start).toBe('function');
         });
         it('getHeading()', () => {
-          expect(component.getHeading).to.be.a('function');
+          expect(typeof component.getHeading).toBe('function');
         });
       });
 
       describe('board', () => {
         it('exists', () => {
-          expect(jsInterpreter.globalProperties).to.have.ownProperty('board');
+          expect(jsInterpreter.globalProperties).toHaveProperty('board');
         });
       });
     });

@@ -1,5 +1,3 @@
-import {assert} from '../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 describe('Observer', function () {
   var Observer = require('@cdo/apps/Observer');
   var ObservableEventDEPRECATED = require('@cdo/apps/ObservableEventDEPRECATED');
@@ -28,7 +26,7 @@ describe('Observer', function () {
 
       eventA.notifyObservers();
 
-      assert(log === 'XXYXY');
+      expect(log).toBe('XXYXY');
     });
 
     it('does not share functions between events', function () {
@@ -37,7 +35,7 @@ describe('Observer', function () {
 
       eventA.notifyObservers();
 
-      assert(log === 'X');
+      expect(log).toBe('X');
     });
 
     it('can be fired multiple times', function () {
@@ -47,11 +45,11 @@ describe('Observer', function () {
 
       eventA.notifyObservers();
 
-      assert(log === 'XXY');
+      expect(log).toBe('XXY');
 
       eventA.notifyObservers();
 
-      assert(log === 'XXYXXY');
+      expect(log).toBe('XXYXXY');
     });
   });
 
@@ -62,24 +60,24 @@ describe('Observer', function () {
       observer.observe(eventB, funcX);
 
       eventA.notifyObservers();
-      assert(log === 'XY', 'Event A received');
+      expect(log).toBe('XY');
 
       eventB.notifyObservers();
-      assert(log === 'XYX', 'Event B received');
+      expect(log).toBe('XYX');
 
       observer.unobserveAll();
       eventA.notifyObservers();
-      assert(log === 'XYX', 'No change');
+      expect(log).toBe('XYX');
 
       eventB.notifyObservers();
-      assert(log === 'XYX', 'No change');
+      expect(log).toBe('XYX');
     });
 
     it('can safely unregister when original references to events are lost', function () {
       observer.observe(eventA, funcX);
 
       eventA.notifyObservers();
-      assert(log === 'X', 'Event A received');
+      expect(log).toBe('X');
 
       eventA = null;
 
@@ -101,10 +99,10 @@ describe('Observer', function () {
     observer.observe(eventA, funcUsesThis.bind(clientB));
     eventA.notifyObservers();
 
-    assert(clientA.log === 'Z');
-    assert(clientA.that === clientA);
-    assert(clientB.log === 'Z');
-    assert(clientB.that === clientB);
+    expect(clientA.log).toBe('Z');
+    expect(clientA.that).toBe(clientA);
+    expect(clientB.log).toBe('Z');
+    expect(clientB.that).toBe(clientB);
   });
 
   it('passes arguments through to observers', function () {
@@ -117,6 +115,6 @@ describe('Observer', function () {
 
     eventA.notifyObservers('W');
 
-    assert(log === 'XW');
+    expect(log).toBe('XW');
   });
 });

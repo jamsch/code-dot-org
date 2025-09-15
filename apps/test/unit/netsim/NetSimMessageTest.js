@@ -1,5 +1,4 @@
 import {assertOwnProperty} from '../../util/assertions';
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
 
 var NetSimEntity = require('@cdo/apps/netsim/NetSimEntity');
 var NetSimMessage = require('@cdo/apps/netsim/NetSimMessage');
@@ -19,39 +18,39 @@ describe('NetSimMessage', function () {
 
   it('uses the message table', function () {
     var message = new NetSimMessage(testShard);
-    assert.strictEqual(message.getTable(), testShard.messageTable);
+    expect(message.getTable()).toBe(testShard.messageTable);
   });
 
   it('implements MessageData', function () {
     var message = new NetSimMessage(testShard);
 
     assertOwnProperty(message, 'fromNodeID');
-    assert.isUndefined(message.fromNodeID);
+    expect(message.fromNodeID).toBeUndefined();
 
     assertOwnProperty(message, 'toNodeID');
-    assert.isUndefined(message.toNodeID);
+    expect(message.toNodeID).toBeUndefined();
 
     assertOwnProperty(message, 'simulatedBy');
-    assert.isUndefined(message.simulatedBy);
+    expect(message.simulatedBy).toBeUndefined();
 
     assertOwnProperty(message, 'payload');
-    assert.strictEqual(message.payload, '');
+    expect(message.payload).toBe('');
 
     assertOwnProperty(message, 'extraHopsRemaining');
-    assert.strictEqual(message.extraHopsRemaining, 0);
+    expect(message.extraHopsRemaining).toBe(0);
 
     assertOwnProperty(message, 'visitedNodeIDs');
-    assert.deepEqual(message.visitedNodeIDs, []);
+    expect(message.visitedNodeIDs).toEqual([]);
   });
 
   describe('isValid static check', function () {
     it('is minimally valid with a payload', function () {
-      assert.isFalse(NetSimMessage.isValid({}));
-      assert.isTrue(NetSimMessage.isValid({payload: ''}));
+      expect(NetSimMessage.isValid({})).toBe(false);
+      expect(NetSimMessage.isValid({payload: ''})).toBe(true);
     });
 
     it('passes given a default-constructed NetSimMessage', function () {
-      assert.isTrue(NetSimMessage.isValid(new NetSimMessage()));
+      expect(NetSimMessage.isValid(new NetSimMessage())).toBe(true);
     });
   });
 
@@ -67,7 +66,7 @@ describe('NetSimMessage', function () {
       extraHopsRemaining: 3,
       visitedNodeIDs: [4],
     });
-    assert.equal(message.payload, '1001001');
+    expect(message.payload).toBe('1001001');
   });
 
   it('gracefully converts a malformed base64Payload to empty string', function () {
@@ -77,19 +76,19 @@ describe('NetSimMessage', function () {
         len: 7,
       },
     });
-    assert.strictEqual(message.payload, '');
+    expect(message.payload).toBe('');
   });
 
   describe('static method send', function () {
     it('adds an entry to the message table', function () {
       messageTable.refresh(function (err, rows) {
-        assert.strictEqual(rows.length, 0, 'Table is empty');
+        expect(rows.length).toBe(0);
       });
 
       NetSimMessage.send(testShard, {payload: ''}, function () {});
 
       messageTable.refresh(function (err, rows) {
-        assert.strictEqual(rows.length, 1, 'Table has one row');
+        expect(rows.length).toBe(1);
       });
     });
 
@@ -119,18 +118,18 @@ describe('NetSimMessage', function () {
 
       messageTable.refresh(function (err, rows) {
         var row = rows[0];
-        assert.equal(row.fromNodeID, fromNodeID);
-        assert.equal(row.toNodeID, toNodeID);
-        assert.equal(row.simulatedBy, simulatedBy);
-        assert.deepEqual(row.base64Payload, base64Payload);
-        assert.equal(row.extraHopsRemaining, extraHopsRemaining);
-        assert.deepEqual(row.visitedNodeIDs, visitedNodeIDs);
+        expect(row.fromNodeID).toBe(fromNodeID);
+        expect(row.toNodeID).toBe(toNodeID);
+        expect(row.simulatedBy).toBe(simulatedBy);
+        expect(row.base64Payload).toEqual(base64Payload);
+        expect(row.extraHopsRemaining).toBe(extraHopsRemaining);
+        expect(row.visitedNodeIDs).toEqual(visitedNodeIDs);
       });
     });
 
     it('Returns no error to its callback when successful', function () {
       NetSimMessage.send(testShard, {payload: ''}, function (err) {
-        assert.isNull(err, 'Error is null on success');
+        expect(err).toBeNull();
       });
     });
 
@@ -150,11 +149,7 @@ describe('NetSimMessage', function () {
           returnedError = err;
         }
       );
-      assert.instanceOf(
-        returnedError,
-        TypeError,
-        'Did not return expected TypeError'
-      );
+      expect(returnedError).toBeInstanceOf(TypeError);
     });
   });
 
@@ -179,16 +174,16 @@ describe('NetSimMessage', function () {
         testRow = row;
       }
     );
-    assert.isDefined(testRow, 'Failed to create test row');
+    expect(testRow).toBeDefined();
 
     // Instantiate message
     var message = new NetSimMessage(testShard, testRow);
-    assert.equal(message.fromNodeID, 1);
-    assert.equal(message.toNodeID, 2);
-    assert.equal(message.simulatedBy, 2);
-    assert.equal(message.payload, '1001001');
-    assert.equal(message.extraHopsRemaining, 3);
-    assert.deepEqual(message.visitedNodeIDs, [4]);
+    expect(message.fromNodeID).toBe(1);
+    expect(message.toNodeID).toBe(2);
+    expect(message.simulatedBy).toBe(2);
+    expect(message.payload).toBe('1001001');
+    expect(message.extraHopsRemaining).toBe(3);
+    expect(message.visitedNodeIDs).toEqual([4]);
   });
 
   it('can be removed from the remote table with destroy()', function () {
@@ -198,7 +193,7 @@ describe('NetSimMessage', function () {
     messageTable.create({}, function (err, row) {
       testRow = row;
     });
-    assert.isDefined(testRow, 'Failed to create test row');
+    expect(testRow).toBeDefined();
 
     // Call destroy()
     var message = new NetSimMessage(testShard, testRow);
@@ -209,7 +204,7 @@ describe('NetSimMessage', function () {
     messageTable.refresh(function (err, rows) {
       rowCount = rows.length;
     });
-    assert.strictEqual(rowCount, 0);
+    expect(rowCount).toBe(0);
   });
 
   describe('destroyEntities on messages', function () {
@@ -252,8 +247,8 @@ describe('NetSimMessage', function () {
           return new NetSimMessage(testShard, row);
         });
       });
-      assert.equal(3, messages.length);
-      assert.instanceOf(messages[0], NetSimMessage);
+      expect(3).toBe(messages.length);
+      expect(messages[0]).toBeInstanceOf(NetSimMessage);
 
       NetSimEntity.destroyEntities(messages, function () {});
       assertTableSize(testShard, 'messageTable', 0);
@@ -266,25 +261,25 @@ describe('NetSimMessage', function () {
       var row = message.buildRow();
 
       assertOwnProperty(row, 'fromNodeID');
-      assert.isUndefined(row.fromNodeID);
+      expect(row.fromNodeID).toBeUndefined();
 
       assertOwnProperty(row, 'toNodeID');
-      assert.isUndefined(row.toNodeID);
+      expect(row.toNodeID).toBeUndefined();
 
       assertOwnProperty(row, 'simulatedBy');
-      assert.isUndefined(row.simulatedBy);
+      expect(row.simulatedBy).toBeUndefined();
 
       assertOwnProperty(row, 'base64Payload');
-      assert.deepEqual(row.base64Payload, {
+      expect(row.base64Payload).toEqual({
         string: '',
         len: 0,
       });
 
       assertOwnProperty(row, 'extraHopsRemaining');
-      assert.strictEqual(row.extraHopsRemaining, 0);
+      expect(row.extraHopsRemaining).toBe(0);
 
       assertOwnProperty(row, 'visitedNodeIDs');
-      assert.deepEqual(row.visitedNodeIDs, []);
+      expect(row.visitedNodeIDs).toEqual([]);
     });
 
     it('converts local binary payload to base64 before creating row', function () {
@@ -301,8 +296,8 @@ describe('NetSimMessage', function () {
         visitedNodeIDs: [4],
       });
       var row = message.buildRow();
-      assert.equal(row.base64Payload.string, base64Payload.string);
-      assert.equal(row.base64Payload.len, base64Payload.len);
+      expect(row.base64Payload.string).toBe(base64Payload.string);
+      expect(row.base64Payload.len).toBe(base64Payload.len);
     });
   });
 });

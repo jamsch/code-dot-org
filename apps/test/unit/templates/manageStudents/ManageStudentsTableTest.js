@@ -42,7 +42,6 @@ import experiments from '@cdo/apps/util/experiments';
 import {SectionLoginType} from '@cdo/generated-scripts/sharedConstants';
 import i18n from '@cdo/locale';
 
-import {expect} from '../../../util/deprecatedChai'; // eslint-disable-line no-restricted-imports
 import {allowConsoleWarnings} from '../../../util/throwOnConsole';
 
 describe('ManageStudentsTable', () => {
@@ -61,13 +60,13 @@ describe('ManageStudentsTable', () => {
     const columnIndexList = [];
     const orderList = ['asc'];
     const sortedList = sortRows(rowData, columnIndexList, orderList);
-    expect(sortedList[0].id).to.equal(0);
-    expect(sortedList[1].id).to.equal(2);
-    expect(sortedList[2].id).to.equal(3);
-    expect(sortedList[3].id).to.equal(4);
-    expect(sortedList[4].id).to.equal(5);
-    expect(sortedList[5].id).to.equal(1);
-    expect(sortedList[6].id).to.equal(6);
+    expect(sortedList[0].id).toBe(0);
+    expect(sortedList[1].id).toBe(2);
+    expect(sortedList[2].id).toBe(3);
+    expect(sortedList[3].id).toBe(4);
+    expect(sortedList[4].id).toBe(5);
+    expect(sortedList[5].id).toBe(1);
+    expect(sortedList[6].id).toBe(6);
   });
 
   describe('appropriate buttons render', () => {
@@ -83,7 +82,7 @@ describe('ManageStudentsTable', () => {
       const wrapper = shallow(
         <UnconnectedManageStudentsTable {...DEFAULT_PROPS} />
       );
-      expect(wrapper.find('MoveStudents').exists()).to.be.false;
+      expect(wrapper.find('MoveStudents').exists()).toBe(false);
     });
 
     it('does not render MoveStudents if loginType is clever', () => {
@@ -92,7 +91,7 @@ describe('ManageStudentsTable', () => {
           {...{...DEFAULT_PROPS, ...{loginType: SectionLoginType.clever}}}
         />
       );
-      expect(wrapper.find('MoveStudents').exists()).to.be.false;
+      expect(wrapper.find('MoveStudents').exists()).toBe(false);
     });
 
     it('does not render Code Review Groups Dialog (and button) if section is not assigned CSA', () => {
@@ -101,7 +100,7 @@ describe('ManageStudentsTable', () => {
           {...{...DEFAULT_PROPS, ...{isSectionAssignedCSA: false}}}
         />
       );
-      expect(wrapper.find(CodeReviewGroupsDialog).exists()).to.be.false;
+      expect(wrapper.find(CodeReviewGroupsDialog).exists()).toBe(false);
     });
 
     it('does renders Code Review Groups Dialog (and button) if section is assigned CSA', () => {
@@ -113,7 +112,7 @@ describe('ManageStudentsTable', () => {
           }}
         />
       );
-      expect(wrapper.find(CodeReviewGroupsDialog).exists()).to.be.true;
+      expect(wrapper.find(CodeReviewGroupsDialog).exists()).toBe(true);
     });
   });
 
@@ -174,19 +173,21 @@ describe('ManageStudentsTable', () => {
           <ManageStudentsTable />
         </Provider>
       );
-      expect(wrapper).to.containMatchingElement(
-        <ManageStudentsActionsCell
-          id={fakeStudent.id}
-          sectionId={fakeStudent.sectionId}
-          rowType={RowType.STUDENT}
-          loginType={fakeStudent.loginType}
-          studentName={fakeStudent.name}
-          hasEverSignedIn={fakeStudent.hasEverSignedIn}
-          dependsOnThisSectionForLogin={
-            fakeStudent.dependsOnThisSectionForLogin
-          }
-        />
-      );
+      expect(
+        wrapper.containsMatchingElement(
+          <ManageStudentsActionsCell
+            id={fakeStudent.id}
+            sectionId={fakeStudent.sectionId}
+            rowType={RowType.STUDENT}
+            loginType={fakeStudent.loginType}
+            studentName={fakeStudent.name}
+            hasEverSignedIn={fakeStudent.hasEverSignedIn}
+            dependsOnThisSectionForLogin={
+              fakeStudent.dependsOnThisSectionForLogin
+            }
+          />
+        )
+      ).toBe(true);
     });
 
     describe('Gender field feature flag', () => {
@@ -204,7 +205,7 @@ describe('ManageStudentsTable', () => {
             <ManageStudentsTable />
           </Provider>
         );
-        expect(wrapper.find(ManageStudentsGenderCell).exists()).to.be.true;
+        expect(wrapper.find(ManageStudentsGenderCell).exists()).toBe(true);
       });
 
       it('does render the gender column if loginType is secret word', () => {
@@ -215,7 +216,7 @@ describe('ManageStudentsTable', () => {
             <ManageStudentsTable />
           </Provider>
         );
-        expect(wrapper.find(ManageStudentsGenderCell).exists()).to.be.true;
+        expect(wrapper.find(ManageStudentsGenderCell).exists()).toBe(true);
       });
 
       it('does not render the gender column if loginType is email', () => {
@@ -226,7 +227,7 @@ describe('ManageStudentsTable', () => {
             <ManageStudentsTable />
           </Provider>
         );
-        expect(wrapper.find(ManageStudentsGenderCell).exists()).to.be.false;
+        expect(wrapper.find(ManageStudentsGenderCell).exists()).toBe(false);
       });
 
       it('does not render the gender column if loginType is Google', () => {
@@ -237,7 +238,7 @@ describe('ManageStudentsTable', () => {
             <ManageStudentsTable />
           </Provider>
         );
-        expect(wrapper.find(ManageStudentsGenderCell).exists()).to.be.false;
+        expect(wrapper.find(ManageStudentsGenderCell).exists()).toBe(false);
       });
 
       it('does not render the gender column if loginType is Clever', () => {
@@ -248,7 +249,7 @@ describe('ManageStudentsTable', () => {
             <ManageStudentsTable />
           </Provider>
         );
-        expect(wrapper.find(ManageStudentsGenderCell).exists()).to.be.false;
+        expect(wrapper.find(ManageStudentsGenderCell).exists()).toBe(false);
       });
     });
 
@@ -270,18 +271,18 @@ describe('ManageStudentsTable', () => {
           .first();
 
       // Check for a name cell with expecting initial editing props
-      expect(manageStudentNameCell().exists()).to.be.true;
-      expect(manageStudentNameCell().prop('isEditing')).to.be.true;
+      expect(manageStudentNameCell().exists()).toBe(true);
+      expect(manageStudentNameCell().prop('isEditing')).toBe(true);
 
       // Find the name input
       const nameInput = () => manageStudentNameCell().find('input').first();
-      expect(nameInput().prop('value')).to.equal(fakeStudent.name);
+      expect(nameInput().prop('value')).toBe(fakeStudent.name);
 
       // Simulate a name change
       nameInput().simulate('change', {target: {value: fakeStudent.name + 'z'}});
 
       // Expect the input box value to have changed
-      expect(nameInput().prop('value')).to.equal(fakeStudent.name + 'z');
+      expect(nameInput().prop('value')).toBe(fakeStudent.name + 'z');
     });
 
     it('renders an editable family name field in student sections', async () => {
@@ -302,19 +303,19 @@ describe('ManageStudentsTable', () => {
           .first();
 
       // Check for a family name cell with expecting initial editing props
-      expect(manageStudentFamilyNameCell().exists()).to.be.true;
-      expect(manageStudentFamilyNameCell().prop('isEditing')).to.be.true;
+      expect(manageStudentFamilyNameCell().exists()).toBe(true);
+      expect(manageStudentFamilyNameCell().prop('isEditing')).toBe(true);
 
       // Find the family name input
       const nameInput = () =>
         manageStudentFamilyNameCell().find('input').first();
-      expect(nameInput().prop('value')).to.equal('');
+      expect(nameInput().prop('value')).toBe('');
 
       // Simulate a family name change
       nameInput().simulate('change', {target: {value: 'z'}});
 
       // Expect the input box value to have changed
-      expect(nameInput().prop('value')).to.equal('z');
+      expect(nameInput().prop('value')).toBe('z');
     });
 
     it('does not render a family name field in PL sections', async () => {
@@ -337,7 +338,7 @@ describe('ManageStudentsTable', () => {
           .first();
 
       // Check for a family name cell with expecting initial editing props
-      expect(manageStudentFamilyNameCell().exists()).to.be.false;
+      expect(manageStudentFamilyNameCell().exists()).toBe(false);
     });
 
     it('renders correctly if loginType is picture', () => {
@@ -349,18 +350,19 @@ describe('ManageStudentsTable', () => {
         </Provider>
       );
       const passwordColumnHeader = wrapper.find('#password-header');
-      expect(passwordColumnHeader).to.have.lengthOf(1);
-      expect(passwordColumnHeader.text()).to.equal(i18n.picturePassword());
+      expect(passwordColumnHeader).toHaveLength(1);
+      expect(passwordColumnHeader.text()).toBe(i18n.picturePassword());
       const showSecret = wrapper.find('ShowSecret');
-      expect(showSecret).to.have.lengthOf(1);
-      expect(showSecret.find('Button').text()).to.equal(i18n.showPicture());
+      expect(showSecret).toHaveLength(1);
+      expect(showSecret.find('Button').text()).toBe(i18n.showPicture());
       const loginInfo = wrapper.find('ManageStudentsLoginInfo');
-      expect(loginInfo.props().loginType).to.equal(SectionLoginType.picture);
-      expect(loginInfo.find('SignInInstructions').props().loginType).to.equal(
+      expect(loginInfo.props().loginType).toBe(SectionLoginType.picture);
+      expect(loginInfo.find('SignInInstructions').props().loginType).toBe(
         SectionLoginType.picture
       );
-      expect(wrapper.containsMatchingElement('#uitest-no-section-code')).to.be
-        .false;
+      expect(wrapper.containsMatchingElement('#uitest-no-section-code')).toBe(
+        false
+      );
     });
 
     it('renders correctly if loginType is word', () => {
@@ -378,18 +380,19 @@ describe('ManageStudentsTable', () => {
         </Provider>
       );
       const passwordColumnHeader = wrapper.find('#password-header');
-      expect(passwordColumnHeader).to.have.lengthOf(1);
-      expect(passwordColumnHeader.text()).to.equal(i18n.secretWords());
+      expect(passwordColumnHeader).toHaveLength(1);
+      expect(passwordColumnHeader.text()).toBe(i18n.secretWords());
       const showSecret = wrapper.find('ShowSecret');
-      expect(showSecret).to.have.lengthOf(1);
-      expect(showSecret.find('Button').text()).to.equal(i18n.showWords());
+      expect(showSecret).toHaveLength(1);
+      expect(showSecret.find('Button').text()).toBe(i18n.showWords());
       const loginInfo = wrapper.find('ManageStudentsLoginInfo');
-      expect(loginInfo.props().loginType).to.equal(SectionLoginType.word);
-      expect(loginInfo.find('SignInInstructions').props().loginType).to.equal(
+      expect(loginInfo.props().loginType).toBe(SectionLoginType.word);
+      expect(loginInfo.find('SignInInstructions').props().loginType).toBe(
         SectionLoginType.word
       );
-      expect(wrapper.containsMatchingElement('#uitest-no-section-code')).to.be
-        .false;
+      expect(wrapper.containsMatchingElement('#uitest-no-section-code')).toBe(
+        false
+      );
     });
 
     it('renders correctly if loginType is personal email', () => {
@@ -407,16 +410,17 @@ describe('ManageStudentsTable', () => {
         </Provider>
       );
       const passwordColumnHeader = wrapper.find('#password-header');
-      expect(passwordColumnHeader).to.have.lengthOf(1);
-      expect(passwordColumnHeader.text()).to.equal(i18n.password());
-      expect(wrapper.find('PasswordReset')).to.have.lengthOf(1);
+      expect(passwordColumnHeader).toHaveLength(1);
+      expect(passwordColumnHeader.text()).toBe(i18n.password());
+      expect(wrapper.find('PasswordReset')).toHaveLength(1);
       const loginInfo = wrapper.find('ManageStudentsLoginInfo');
-      expect(loginInfo.props().loginType).to.equal(SectionLoginType.email);
-      expect(loginInfo.find('SignInInstructions').props().loginType).to.equal(
+      expect(loginInfo.props().loginType).toBe(SectionLoginType.email);
+      expect(loginInfo.find('SignInInstructions').props().loginType).toBe(
         SectionLoginType.email
       );
-      expect(wrapper.containsMatchingElement('#uitest-no-section-code')).to.be
-        .false;
+      expect(wrapper.containsMatchingElement('#uitest-no-section-code')).toBe(
+        false
+      );
     });
 
     it('displays notification for password reset length if state.showPasswordLengthFailure is true', () => {
@@ -437,8 +441,8 @@ describe('ManageStudentsTable', () => {
       manageStudentsTable.setState({showPasswordLengthFailure: true});
 
       const passwordFailureNotificaton = wrapper.find('Notification');
-      expect(passwordFailureNotificaton).to.have.length(1);
-      expect(passwordFailureNotificaton.props().notice).to.equal(
+      expect(passwordFailureNotificaton).toHaveLength(1);
+      expect(passwordFailureNotificaton.props().notice).toBe(
         i18n.passwordsMustBeSixChars()
       );
     });
@@ -456,10 +460,10 @@ describe('ManageStudentsTable', () => {
         </Provider>
       );
       const passwordColumnHeader = wrapper.find('#password-header');
-      expect(passwordColumnHeader).to.have.lengthOf(0);
+      expect(passwordColumnHeader).toHaveLength(0);
       const loginInfo = wrapper.find('ManageStudentsLoginInfo');
-      expect(loginInfo.props().loginType).to.equal(SectionLoginType.clever);
-      expect(loginInfo.find('SignInInstructions').props().loginType).to.equal(
+      expect(loginInfo.props().loginType).toBe(SectionLoginType.clever);
+      expect(loginInfo.find('SignInInstructions').props().loginType).toBe(
         SectionLoginType.clever
       );
     });
@@ -477,12 +481,12 @@ describe('ManageStudentsTable', () => {
         </Provider>
       );
       const passwordColumnHeader = wrapper.find('#password-header');
-      expect(passwordColumnHeader).to.have.lengthOf(0);
+      expect(passwordColumnHeader).toHaveLength(0);
       const loginInfo = wrapper.find('ManageStudentsLoginInfo');
-      expect(loginInfo.props().loginType).to.equal(
+      expect(loginInfo.props().loginType).toBe(
         SectionLoginType.google_classroom
       );
-      expect(loginInfo.find('SignInInstructions').props().loginType).to.equal(
+      expect(loginInfo.find('SignInInstructions').props().loginType).toBe(
         SectionLoginType.google_classroom
       );
     });
@@ -535,7 +539,7 @@ describe('ManageStudentsTable', () => {
                     manageStatus={defaultAddTransferStatus}
                   />
                 )
-              ).to.be.false;
+              ).toBe(false);
             });
           });
 
@@ -566,7 +570,7 @@ describe('ManageStudentsTable', () => {
                     manageStatus={defaultAddTransferStatus}
                   />
                 )
-              ).to.be.false;
+              ).toBe(false);
             });
           });
         });
@@ -588,7 +592,7 @@ describe('ManageStudentsTable', () => {
                     manageStatus={defaultAddTransferStatus}
                   />
                 )
-              ).to.be.false;
+              ).toBe(false);
             });
           });
 
@@ -608,7 +612,7 @@ describe('ManageStudentsTable', () => {
                     manageStatus={defaultAddTransferStatus}
                   />
                 )
-              ).to.be.false;
+              ).toBe(false);
             });
           });
         });
@@ -631,7 +635,7 @@ describe('ManageStudentsTable', () => {
                   manageStatus={{...defaultAddTransferStatus, status: 'full'}}
                 />
               )
-            ).to.be.true;
+            ).toBe(true);
           });
           it('moved', () => {
             getStore().dispatch(
@@ -657,7 +661,7 @@ describe('ManageStudentsTable', () => {
                   }}
                 />
               )
-            ).to.be.true;
+            ).toBe(true);
           });
           it('copied', () => {
             getStore().dispatch(
@@ -683,7 +687,7 @@ describe('ManageStudentsTable', () => {
                   }}
                 />
               )
-            ).to.be.true;
+            ).toBe(true);
           });
         });
         describe('Multiple students', () => {
@@ -707,7 +711,7 @@ describe('ManageStudentsTable', () => {
                   manageStatus={{...defaultAddTransferStatus, status: 'full'}}
                 />
               )
-            ).to.be.true;
+            ).toBe(true);
           });
           it('moved', () => {
             getStore().dispatch(
@@ -733,7 +737,7 @@ describe('ManageStudentsTable', () => {
                   }}
                 />
               )
-            ).to.be.true;
+            ).toBe(true);
           });
           it('copied', () => {
             getStore().dispatch(
@@ -759,7 +763,7 @@ describe('ManageStudentsTable', () => {
                   }}
                 />
               )
-            ).to.be.true;
+            ).toBe(true);
           });
         });
       });

@@ -8,12 +8,6 @@ import isRtl from '@cdo/apps/code-studio/isRtlRedux';
 import TopCourse from '@cdo/apps/templates/studioHomepages/TopCourse';
 import i18n from '@cdo/locale';
 
-// eslint-disable-next-line no-restricted-imports
-import {
-  // assert,
-  expect,
-} from '../../../util/reconfiguredChai';
-
 import {topCourse} from './homepagesTestData';
 
 describe('TopCourse', () => {

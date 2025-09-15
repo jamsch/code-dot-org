@@ -1,7 +1,5 @@
 import $ from 'jquery';
 
-import {assert} from '../../util/reconfiguredChai'; // eslint-disable-line no-restricted-imports
-
 var NetSimVizElement = require('@cdo/apps/netsim/NetSimVizElement');
 var NetSimVizNode = require('@cdo/apps/netsim/NetSimVizNode');
 
@@ -14,36 +12,36 @@ describe('NetSimVizNode', function () {
     });
 
     it('is a VizElement', function () {
-      assert.instanceOf(vizNode, NetSimVizElement);
+      expect(vizNode).toBeInstanceOf(NetSimVizElement);
     });
 
     it('has default properties', function () {
-      assert.isUndefined(vizNode.address_);
-      assert.isUndefined(vizNode.dnsMode_);
-      assert.isFalse(vizNode.isRouter);
-      assert.isFalse(vizNode.isLocalNode);
-      assert.isFalse(vizNode.isDnsNode);
+      expect(vizNode.address_).toBeUndefined();
+      expect(vizNode.dnsMode_).toBeUndefined();
+      expect(vizNode.isRouter).toBe(false);
+      expect(vizNode.isLocalNode).toBe(false);
+      expect(vizNode.isDnsNode).toBe(false);
     });
 
     it('immediately creates SVG elements', function () {
       var root = vizNode.getRoot();
-      assert.equal('[object SVGElement]', root[0].toString());
+      expect('[object SVGElement]').toBe(root[0].toString());
 
       var rootChildren = root.children();
-      assert.equal(3, rootChildren.length);
+      expect(3).toBe(rootChildren.length);
 
       var circle = rootChildren[0];
-      assert.equal('[object SVGElement]', circle.toString());
+      expect('[object SVGElement]').toBe(circle.toString());
 
       var nameGroup = rootChildren[1];
-      assert.equal('[object SVGElement]', nameGroup.toString());
+      expect('[object SVGElement]').toBe(nameGroup.toString());
       var nameChildren = $(nameGroup).children();
-      assert.equal(2, nameChildren.length);
+      expect(2).toBe(nameChildren.length);
 
       var addressGroup = rootChildren[2];
-      assert.equal('[object SVGElement]', addressGroup.toString());
+      expect('[object SVGElement]').toBe(addressGroup.toString());
       var addressChildren = $(addressGroup).children();
-      assert.equal(2, addressChildren.length);
+      expect(2).toBe(addressChildren.length);
     });
   });
 });
