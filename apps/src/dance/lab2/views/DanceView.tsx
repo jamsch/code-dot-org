@@ -1,4 +1,5 @@
 import {Button} from '@code-dot-org/component-library/button';
+import {useTheme} from '@code-dot-org/component-library/common/contexts';
 import {BlocklyOptions, Events, WorkspaceSvg} from 'blockly/core';
 import classNames from 'classnames';
 import {isEqual} from 'lodash';
@@ -6,6 +7,8 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {loadBlocksToWorkspace} from '@cdo/apps/blockly/addons/cdoUtils';
 import {BLOCK_TYPES} from '@cdo/apps/blockly/constants';
+import cdoDark from '@cdo/apps/blockly/themes/cdoDark';
+import cdoTheme from '@cdo/apps/blockly/themes/cdoTheme';
 import {WorkspaceSerialization} from '@cdo/apps/blockly/types';
 import {
   applyBlockIdOverrides,
@@ -15,6 +18,7 @@ import {
   getToolboxDefinition,
   workspaceToToolboxDefinition,
 } from '@cdo/apps/blockly/utils/toolbox';
+import BackToParentProject from '@cdo/apps/bubbleChoice/BackToParentProject';
 import {saveReplayLog} from '@cdo/apps/code-studio/components/shareDialogRedux';
 import {queryParams} from '@cdo/apps/code-studio/utils';
 import defaultSources from '@cdo/apps/dance/blockly/defaultSources.json';
@@ -49,8 +53,14 @@ import {
 } from '@cdo/apps/lab2/projects/utils';
 import {isReadOnlyWorkspace} from '@cdo/apps/lab2/redux/lab2ReduxSelectors';
 import {BlocklySource, LabProps} from '@cdo/apps/lab2/types';
+import Guide from '@cdo/apps/lab2/views/components/guide/Guide';
 import ResourcePanel from '@cdo/apps/lab2/views/components/Instructions/ResourcePanel';
 import PanelContainer from '@cdo/apps/lab2/views/components/PanelContainer';
+import SourcesContainer, {
+  useSources,
+} from '@cdo/apps/lab2/views/SourcesContainer';
+import {EVENTS} from '@cdo/apps/metrics/AnalyticsConstants';
+import analyticsReporter from '@cdo/apps/metrics/AnalyticsReporter';
 import ProjectPlayer from '@cdo/apps/music/ProjectPlayer';
 import MusicProjectBar from '@cdo/apps/music/views/MusicProjectBar';
 import {registerReducers} from '@cdo/apps/redux';
@@ -59,12 +69,12 @@ import {commonI18n} from '@cdo/apps/types/locale';
 import {useAppDispatch, useAppSelector} from '@cdo/apps/util/reduxHooks';
 import loadingGif from '@cdo/static/dance/DancePartyLoading.gif';
 
+import buildDanceBlockly from '../../blockly/buildDanceBlockly';
 import danceI18n from '../locale';
 import ProgramExecutor from '../ProgramExecutor';
 
 import DanceControls from './DanceControls';
-import DancerGenerate from './DancerGenerate';
-import SourcesContainer, {useSources} from './SourcesContainer';
+import GenerateDancer from './GenerateDancer';
 
 import moduleStyles from './dance-view.module.scss';
 
@@ -74,11 +84,6 @@ const BLOCKLY_DIV_ID = 'dance-blockly-div';
 registerReducers(reducers);
 
 const isToolboxMode = getAppOptionsEditBlocks() === TOOLBOX_BLOCKS;
-const usingMusicProject =
-  queryParams('music-channel') || queryParams('ai-generate');
-
-const mode =
-  queryParams('ai-generate-dancer') === 'true' ? 'ai-generate-dancer' : false;
 
 /**
  * Renders the Lab2 version of Dance Lab. This separate container
@@ -100,6 +105,8 @@ const DanceView: React.FunctionComponent<{
   const hasRun = useAppSelector(state => state.dance.hasRun);
   const hasEdited = useAppSelector(state => state.dance.hasEdited);
   const isLoading = useAppSelector(state => state.dance.isLoading);
+  const signedIn = useAppSelector(state => state.currentUser.signInState);
+  const scriptName = useAppSelector(state => state.progress.scriptName);
 
   const {currentSources, updateSources, showStartOverDialog} =
     useSources<DanceProjectSources>();
@@ -108,6 +115,13 @@ const DanceView: React.FunctionComponent<{
   const workspace = useRef<WorkspaceSvg | null>(null);
   const musicProjectPlayer = useRef<ProjectPlayer | null>(null);
   const [loadedMusicProject, setLoadedMusicProject] = useState(false);
+  const [generatedAiDance, setGeneratedAiDance] = useState(false);
+
+  const aiGenerateMode =
+    levelProperties.aiCodeGenerate || queryParams('ai-generate') === 'true';
+  const usingMusicProject = queryParams('music-channel') || aiGenerateMode;
+
+  const {theme} = useTheme();
 
   const metadataToUse: SongMetadata | undefined = useMemo(() => {
     if (!musicProjectPlayer.current || !loadedMusicProject) {
@@ -191,6 +205,19 @@ const DanceView: React.FunctionComponent<{
   );
 
   const runProgram = useCallback(async () => {
+    if (!hasRun) {
+      const eventName = levelProperties.isProjectLevel
+        ? EVENTS.PROJECT_ACTIVITY
+        : EVENTS.LEVEL_ACTIVITY;
+
+      analyticsReporter.sendEvent(eventName, {
+        signedIn: signedIn,
+        unitName: scriptName,
+        levelId: levelProperties.id,
+        levelName: levelProperties.name,
+      });
+    }
+
     if (!programExecutor.current || !metadataToUse) {
       return;
     }
@@ -207,7 +234,17 @@ const DanceView: React.FunctionComponent<{
     dispatch(setIsRunning(true));
     dispatch(setHasRun(true));
     saveBlocks(true);
-  }, [programExecutor, metadataToUse, saveBlocks, dispatch]);
+  }, [
+    hasRun,
+    metadataToUse,
+    dispatch,
+    saveBlocks,
+    levelProperties.isProjectLevel,
+    levelProperties.id,
+    levelProperties.name,
+    signedIn,
+    scriptName,
+  ]);
 
   const resetProgram = useCallback(() => {
     programExecutor.current?.reset();
@@ -237,6 +274,14 @@ const DanceView: React.FunctionComponent<{
         e.type === Blockly.Events.BLOCK_MOVE
       ) {
         validateBlockCategories(workspace.current);
+      }
+
+      if (e.type === Events.FINISHED_LOADING) {
+        // Ensure all blocks have valid, non-overlapping positions on the workspace.
+        Blockly.Events.disable();
+        workspace.current?.cleanUp();
+        Blockly.Events.enable();
+        return;
       }
 
       if (e.type !== Events.BLOCK_DRAG && e.type !== Events.BLOCK_CHANGE) {
@@ -302,13 +347,14 @@ const DanceView: React.FunctionComponent<{
       : levelProperties.toolboxDefinition;
 
     workspace.current = Blockly.inject(blocklyDiv, {
-      toolbox,
+      toolbox: aiGenerateMode ? undefined : toolbox,
+      theme: theme === 'Dark' ? cdoDark : cdoTheme,
       readOnly: readonlyWorkspace,
       editBlocks: getAppOptionsEditBlocks(),
     } as BlocklyOptions);
 
     return () => workspace.current?.dispose();
-  }, [dispatch, readonlyWorkspace, levelProperties]);
+  }, [dispatch, readonlyWorkspace, levelProperties, aiGenerateMode, theme]);
 
   useEffect(() => {
     if (!workspace.current) {
@@ -365,11 +411,11 @@ const DanceView: React.FunctionComponent<{
           // just pass a dummy string as we expect to find a music
           // project in local storage.
           (queryParams('music-channel') as string) || 'local-storage',
-          queryParams('ai-generate') === 'true'
+          aiGenerateMode
         )
         .then(() => setLoadedMusicProject(true));
     }
-  }, []);
+  }, [usingMusicProject, aiGenerateMode]);
 
   // Set up the ProgramExecutor
   useEffect(() => {
@@ -392,14 +438,14 @@ const DanceView: React.FunctionComponent<{
       onEventsChanged,
       playSound: musicProjectPlayer.current
         ? (_url, callback) => {
-            console.log('play called at ', Date.now());
-            musicProjectPlayer.current?.play();
+            musicProjectPlayer.current?.play(resetProgram);
             callback(true);
           }
         : undefined,
       stopSound: musicProjectPlayer.current
         ? () => musicProjectPlayer.current?.stop()
         : undefined,
+      onSoundEnded: resetProgram,
     });
 
     if (recordReplayLog) {
@@ -418,27 +464,67 @@ const DanceView: React.FunctionComponent<{
     readonlyWorkspace,
   ]);
 
+  const generateAiDance = useCallback(() => {
+    if (
+      !usingMusicProject ||
+      !musicProjectPlayer.current ||
+      !loadedMusicProject
+    ) {
+      return;
+    }
+
+    setGeneratedAiDance(false);
+    const resultBlockly = buildDanceBlockly(
+      musicProjectPlayer.current.getEventMeasures(),
+      levelProperties.sharedBlocks || []
+    );
+    updateSources({
+      ...currentSources,
+      source: resultBlockly,
+    });
+    setGeneratedAiDance(true);
+  }, [
+    currentSources,
+    updateSources,
+    loadedMusicProject,
+    levelProperties.sharedBlocks,
+    usingMusicProject,
+  ]);
+
   const settings = useBlocklySettings();
 
   return (
     <div id="dance-lab" className={moduleStyles.danceLab}>
       {!getIsShareView() && <AgeDialog turnOffFilter={turnOffFilter} />}
-      <ResourcePanel
-        isRunning={isRunning}
-        hasRun={hasRun}
-        hasEdited={hasEdited}
-        levelProperties={levelProperties}
-        headerClassName={moduleStyles.panelHeader}
-        className={moduleStyles.instructionsArea}
-        settings={settings}
-      />
+      {!aiGenerateMode && (
+        <ResourcePanel
+          isRunning={isRunning}
+          hasRun={hasRun}
+          hasEdited={hasEdited}
+          levelProperties={levelProperties}
+          headerClassName={moduleStyles.panelHeader}
+          className={moduleStyles.instructionsArea}
+          settings={settings}
+        />
+      )}
       <div className={moduleStyles.divider} />
       {!isToolboxMode && (
         <PanelContainer
           id="visualization"
           headerContent="Dance Party!"
           headerClassName={moduleStyles.panelHeader}
-          className={moduleStyles.visualizationArea}
+          className={classNames(
+            moduleStyles.visualizationArea,
+            aiGenerateMode && moduleStyles.jumbo
+          )}
+          leftHeaderContent={
+            <BackToParentProject
+              text="Go to Hub"
+              iconLeft={{iconName: 'home'}}
+              type="secondary"
+              size="s"
+            />
+          }
         >
           <div className={moduleStyles.visualizationColumn}>
             {!usingMusicProject && currentSources.selectedSong && (
@@ -506,14 +592,44 @@ const DanceView: React.FunctionComponent<{
         {WorkspaceAlert}
         <div id={BLOCKLY_DIV_ID} />
       </PanelContainer>
+      {aiGenerateMode && (
+        <Guide id="generate-panel" width="narrow">
+          {
+            <>
+              <div>
+                {generatedAiDance
+                  ? "Let's dance!"
+                  : "Now, let's generate a dance sequence to go with your song!"}
+              </div>
+              <Button
+                ariaLabel={'Generate dance'}
+                text={generatedAiDance ? 'Generate again!' : 'Generate dance'}
+                type="primary"
+                color="black"
+                size="s"
+                iconLeft={{iconName: 'sparkles'}}
+                onClick={generateAiDance}
+              />
+            </>
+          }
+        </Guide>
+      )}
     </div>
   );
 };
 
 export default (props: LabProps<DanceLevelProperties, DanceProjectSources>) => (
   <SourcesContainer {...props} defaultSources={defaultSources}>
-    {mode === 'ai-generate-dancer' ? (
-      <DancerGenerate />
+    {queryParams('ai-generate-dancer') === 'true' ||
+    props.levelProperties.generateDancerMode ? (
+      <GenerateDancer
+        adlibOption={
+          (queryParams('ai-generate-adlib') as string) ||
+          props.levelProperties.aiDancerGenerateAdlib ||
+          'adjective-animal-attire'
+        }
+        levelProperties={props.levelProperties}
+      />
     ) : (
       <DanceView levelProperties={props.levelProperties} />
     )}

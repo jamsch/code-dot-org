@@ -1,3 +1,4 @@
+import LottieDancerRenderer from '@cdo/apps/dance/lottie/LottieDancerRenderer';
 import LabMetricsReporter from '@cdo/apps/lab2/Lab2MetricsReporter';
 import CustomMarshalingInterpreter from '@cdo/apps/lib/tools/jsinterpreter/CustomMarshalingInterpreter';
 import {commands as audioCommands} from '@cdo/apps/lib/util/audioApi';
@@ -38,6 +39,7 @@ interface ProgramExecutorOptions {
     onEnded: () => void
   ) => void;
   stopSound?: () => void;
+  onSoundEnded?: () => void;
 }
 
 /**
@@ -52,6 +54,7 @@ export default class ProgramExecutor {
   private validationCode?: string;
   private onEventsChanged?: () => void;
   private stopSound?: () => void;
+  private onSoundEnded?: () => void;
 
   private livePreviewActive = false;
   private currentlyPlayingSong: string | null = null;
@@ -61,6 +64,7 @@ export default class ProgramExecutor {
     this.validationCode = options.validationCode;
     this.onEventsChanged = options.onEventsChanged;
     this.stopSound = options.stopSound;
+    this.onSoundEnded = options.onSoundEnded;
     this.nativeAPI =
       nativeAPI ||
       new DanceParty({
@@ -84,6 +88,7 @@ export default class ProgramExecutor {
         i18n: danceMsg,
         resourceLoader: new ResourceLoader(ASSET_BASE),
         logger: options.metricsReporter,
+        externalRendererFactory: () => new LottieDancerRenderer(),
       });
     this.nativeAPI.reset();
     this.metricsReporter = options.metricsReporter;
@@ -307,6 +312,7 @@ export default class ProgramExecutor {
     const onEndedWrapper = () => {
       this.currentlyPlayingSong = null;
       onEnded();
+      this.onSoundEnded?.();
     };
 
     audioCommands.playSound({
